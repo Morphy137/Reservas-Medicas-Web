@@ -1,0 +1,208 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Oswald:wght@700&display=swap');
+
+:root {
+  /* Colores principales */
+  --primary: #415a77;        /* Azul medio/acento */
+  --secondary: #778da9;      /* Azul claro/acento */
+  --light: #e0e1dd;          /* Fondo general */
+  --dark: #0d1b2a;           /* Texto principal */
+  --navbar-bg: #0d1b2a;      /* Navbar y footer */
+  --button-bg: #415a77;      /* Botón principal */
+  --button-text: #fff;       /* Texto de botón */
+}
+
+body {
+  font-family: 'Inter', Arial, sans-serif;
+  background-color: var(--light);
+  color: var(--dark);
+  margin: 0;
+  min-height: 100vh;
+  padding-top: 56px; /* Ajusta según la altura de tu navbar */
+}
+
+/* Oculta la barra de scroll en body y html */
+body, html {
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE y Edge */
+}
+body::-webkit-scrollbar, html::-webkit-scrollbar {
+  display: none;                /* Chrome, Safari, Opera, Edge Chromium */
+}
+
+.custom-navbar,
+.footer-main {
+  background-color: var(--navbar-bg) !important;
+  color: var(--light);
+  box-shadow: 0 2px 8px 0 rgba(13,27,42,0.03);
+}
+
+.feature-section,
+.testimonial-section {
+  background: var(--light);
+  padding: 4rem 0;
+}
+
+.card,
+.card.h-100 {
+  background: #fff;
+  color: var(--dark);
+  border: none;
+  box-shadow: 0 2px 8px 0 rgba(13,27,42,0.04);
+  transition: box-shadow 0.3s;
+}
+.card:hover {
+  box-shadow: 0 4px 16px 0 rgba(13,27,42,0.08);
+}
+
+.feature-icon {
+  font-size: 2.5rem;
+  color: var(--primary);
+  transition: transform 0.3s;
+}
+.feature-icon:hover {
+  transform: scale(1.1);
+}
+
+.feature-card-title {
+  color: var(--primary);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.hero-banner {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    linear-gradient(rgba(13,27,42,0.6), rgba(13,27,42,0.6)),
+    url('/bg_home.jpg') center/cover no-repeat;
+  color: var(--light);
+  padding: 0;
+  text-align: center;
+  position: relative;
+  scroll-snap-align: start;
+}
+
+.hero-banner h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  animation: fadeInDown 1s;
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-30px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+
+.hero-banner .lead {
+  max-width: 600px;
+  margin: 1.5rem auto;
+  font-size: 1.25rem;
+  color: var(--primary);
+  animation: fadeIn 1.2s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0;}
+  to { opacity: 1;}
+}
+
+.hero-banner .btn {
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border: none;
+  border-radius: 2rem;
+  padding: 0.75rem 2rem;
+  font-weight: 500;
+  transition: background 0.3s, transform 0.2s;
+}
+.hero-banner .btn:hover {
+  background-color: var(--secondary);
+  color: var(--dark);
+  transform: translateY(-2px) scale(1.03);
+}
+
+.footer-main {
+  padding: 2rem 0;
+  text-align: center;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  border-top: 1px solid #e0e1dd;
+}
+
+.main-scroll-container {
+  scroll-snap-type: y mandatory;
+}
+
+.scroll-down-arrow {
+  position: absolute;
+  left: 50%;
+  bottom: 64px;
+  transform: translateX(-50%);
+  background: none;
+  border: none;
+  font-size: 2.5rem;
+  color: var(--light);
+  cursor: pointer;
+  transition: transform 0.2s, color 0.2s;
+  z-index: 2;
+  opacity: 0.7;
+}
+.scroll-down-arrow:hover {
+  transform: translateX(-50%) scale(1.15);
+  color: var(--secondary);
+  opacity: 1;
+}
+
+.features-testimonials-section {
+  min-height: 100vh;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  background: var(--light);
+}
+
+.features-testimonials-inner {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  height: 100vh; /* Ocupa toda la pantalla */
+}
+
+.features-testimonials-stack {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.feature-section,
+.testimonial-section {
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  padding: 0;
+}
+
+.feature-section {
+  flex: 1.2 1 0;
+}
+.testimonial-section {
+  flex: 0.8 1 0;
+}
+
+/* Responsive: apila igual en móvil */
+@media (max-width: 900px) {
+  .features-testimonials-stack {
+    min-height: 100vh;
+  }
+  .feature-section,
+  .testimonial-section {
+    min-height: 0;
+  }
+}
