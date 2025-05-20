@@ -41,21 +41,28 @@ El objetivo principal de este proyecto es ofrecer una solución integral para la
 
 ```
 /reservas-medicas-web
-├── /client          # Aplicación cliente (frontend)
-│   ├── /public      # Archivos estáticos públicos
-│   └── /src         # Código fuente de la aplicación React
+├── /client              # Aplicación cliente (frontend)
+│   ├── /public          # Archivos estáticos públicos
+│   └── /src             # Código fuente de la aplicación React
+│       ├── /assets      # Imágenes, estilos y recursos estáticos
+│       ├── /components  # Componentes reutilizables de React
+│       ├── /pages       # Vistas o páginas principales
+│       ├── /services    # Lógica para interactuar con APIs
+│       └── /utils       # Funciones utilitarias y helpers
 │
-├── /server          # Servidor backend
-│   ├── /config      # Configuraciones de la base de datos y servidor
-│   ├── /controllers # Lógica para manejar las reservas y usuarios
-│   ├── /models      # Modelos de datos para la base de datos
-│   └── /routes      # Rutas de la API
+├── /server              # Servidor backend
+│   ├── /config          # Configuraciones de la base de datos y servidor
+│   ├── /controllers     # Lógica para manejar las reservas y usuarios
+│   ├── /middlewares     # Middlewares para validaciones y autenticación
+│   ├── /models          # Modelos de datos para la base de datos
+│   ├── /routes          # Rutas de la API
+│   └── /utils           # Funciones utilitarias del backend
 │
-├── /scripts         # Scripts para tareas comunes (p. ej., migraciones)
+├── /scripts             # Scripts para tareas comunes (p. ej., migraciones)
 │
-├── .gitignore       # Archivos y carpetas ignoradas por Git
-├── package.json     # Dependencias y scripts del proyecto
-└── README.md        # Documentación del proyecto
+├── .gitignore           # Archivos y carpetas ignoradas por Git
+├── package.json         # Dependencias y scripts del proyecto
+└── README.md            # Documentación del proyecto
 ```
 
 ---
