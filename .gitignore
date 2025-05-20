@@ -1,0 +1,79 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+dist/
+build/
+.cache/
+.tmp/
+
+# Entornos y configuración
+.env
+.env.*.local
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Firebase
+.firebase/
+.firebaserc
+firebase-debug.log
+
+# MySQL
+*.sql
+*.sqlite
+*.db
+*.db3
+*.s3db
+*.sqlite3
+
+# VS Code
+.vscode/
+.history/
+
+# SO
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Otros
+.idea/
+*.swp
+*.swo
+
+# Build tools
+bower_components/
+jspm_packages/
+
+# React Native
+.expo/
+.expo-shared/
+
+# Next.js / Nuxt.js
+.next/
+.nuxt/
+
+# Svelte
+.svelte-kit/
+
+# Storybook
+.out/
+storybook-static/
+
+# Misc
+*.tgz
+*.gz
+*.zip
+*.tar
+*.rar
+*.7z
