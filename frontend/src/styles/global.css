@@ -29,7 +29,6 @@ body::-webkit-scrollbar, html::-webkit-scrollbar {
   display: none;                /* Chrome, Safari, Opera, Edge Chromium */
 }
 
-.custom-navbar,
 .footer-main {
   background-color: var(--navbar-bg) !important;
   color: var(--light);
@@ -308,6 +307,128 @@ body::-webkit-scrollbar, html::-webkit-scrollbar {
   z-index: 1;
 }
 
+/* Estilos modernos para el navbar */
+.custom-navbar {
+  background: linear-gradient(
+    135deg,
+    var(--navbar-bg) 0%,
+    rgba(13,27,42,0.95) 50%,
+    rgba(65,90,119,0.9) 100%
+  ) !important;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(13,27,42,0.3) !important;
+  transition: all 0.3s ease;
+  padding: 0.8rem 0;
+}
+
+.brand-modern {
+  font-weight: 700 !important;
+  font-size: 1.5rem !important;
+  background: linear-gradient(
+    45deg,
+    var(--light) 0%,
+    rgba(119,141,169,1) 50%,
+    var(--light) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-decoration: none !important;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+}
+
+.brand-modern:hover {
+  transform: scale(1.02);
+  filter: brightness(1.1);
+}
+
+.brand-modern i {
+  background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-size: 1.3rem;
+  animation: heartbeat 2s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.nav-link-modern {
+  color: var(--light) !important;
+  font-weight: 500 !important;
+  padding: 0.6rem 1.2rem !important;
+  border-radius: 0.5rem !important;
+  margin: 0 0.2rem !important;
+  transition: all 0.3s ease !important;
+  position: relative;
+  text-decoration: none !important;
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+}
+
+.nav-link-modern:hover {
+  background: rgba(119,141,169,0.2) !important;
+  color: var(--secondary) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(119,141,169,0.2);
+}
+
+.nav-link-modern.active {
+  background: linear-gradient(
+    135deg,
+    rgba(119,141,169,0.3) 0%,
+    rgba(65,90,119,0.2) 100%
+  ) !important;
+  color: var(--secondary) !important;
+  box-shadow: 0 2px 8px rgba(119,141,169,0.3);
+}
+
+.nav-link-modern i {
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.nav-link-modern:hover i {
+  transform: scale(1.1);
+}
+
+/* Botón CTA especial para Reservas */
+.btn-cta {
+  background: linear-gradient(
+    135deg,
+    var(--button-bg) 0%,
+    var(--secondary) 100%
+  ) !important;
+  color: var(--light) !important;
+  border: 2px solid transparent !important;
+  font-weight: 600 !important;
+}
+
+.btn-cta:hover {
+  background: linear-gradient(
+    135deg,
+    var(--secondary) 0%,
+    var(--button-bg) 100%
+  ) !important;
+  color: var(--light) !important;
+  border: 2px solid rgba(255,255,255,0.2) !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 6px 20px rgba(65,90,119,0.4) !important;
+}
+
+.btn-cta.active {
+  background: var(--secondary) !important;
+  color: var(--dark) !important;
+  box-shadow: 0 4px 15px rgba(119,141,169,0.5) !important;
+}
+
 /* Responsive: apila igual en móvil */
 @media (max-width: 900px) {
   .features-testimonials-stack {
@@ -337,5 +458,20 @@ body::-webkit-scrollbar, html::-webkit-scrollbar {
   .hero-banner .btn {
     padding: 0.6rem 1.5rem;
     font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 991px) {
+  .custom-navbar {
+    padding: 0.5rem 0;
+  }
+  
+  .nav-link-modern {
+    margin: 0.2rem 0 !important;
+    text-align: center;
+  }
+  
+  .brand-modern {
+    font-size: 1.3rem !important;
   }
 }
