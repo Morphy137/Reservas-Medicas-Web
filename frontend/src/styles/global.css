@@ -36,37 +36,82 @@ body::-webkit-scrollbar, html::-webkit-scrollbar {
   box-shadow: 0 2px 8px 0 rgba(13,27,42,0.03);
 }
 
-.feature-section,
-.testimonial-section {
-  background: var(--light);
-  padding: 4rem 0;
+/* Las definiciones específicas están más abajo */
+
+/* Añadir un overlay muy sutil inspirado en salud */
+.feature-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 30% 40%, rgba(224,245,242,0.1) 0%, transparent 60%),
+    radial-gradient(circle at 70% 60%, rgba(188,221,216,0.08) 0%, transparent 60%);
+  pointer-events: none;
 }
+
+/* Sin efectos de onda - transición perfecta con gradientes */
+
+/* Ya definida arriba junto con el z-index y padding */
 
 .card,
 .card.h-100 {
-  background: #fff;
+  background: linear-gradient(
+    145deg,
+    rgba(255,255,255,0.95) 0%,
+    rgba(255,255,255,0.9) 100%
+  );
   color: var(--dark);
   border: none;
-  box-shadow: 0 2px 8px 0 rgba(13,27,42,0.04);
-  transition: box-shadow 0.3s;
+  box-shadow: 
+    0 8px 32px rgba(13,27,42,0.06),
+    0 2px 8px rgba(65,90,119,0.08);
+  transition: box-shadow 0.3s, transform 0.3s;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
 }
 .card:hover {
-  box-shadow: 0 4px 16px 0 rgba(13,27,42,0.08);
+  box-shadow: 
+    0 12px 48px rgba(13,27,42,0.12),
+    0 4px 16px rgba(65,90,119,0.15);
+  transform: translateY(-4px);
 }
 
 .feature-icon {
   font-size: 2.5rem;
-  color: var(--primary);
-  transition: transform 0.3s;
+  /* Gradiente en el icono que combina con la paleta */
+  background: linear-gradient(
+    135deg,
+    var(--primary) 0%,
+    var(--secondary) 50%,
+    var(--primary) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transition: transform 0.3s, filter 0.3s;
+  filter: drop-shadow(0 2px 4px rgba(65,90,119,0.2));
 }
 .feature-icon:hover {
-  transform: scale(1.1);
+  transform: scale(1.1) rotate(5deg);
+  filter: drop-shadow(0 4px 8px rgba(65,90,119,0.3));
 }
 
 .feature-card-title {
-  color: var(--primary);
+  /* Gradiente sutil en el título */
+  background: linear-gradient(
+    90deg,
+    var(--primary) 0%,
+    var(--secondary) 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   font-weight: 700;
   letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(65,90,119,0.1);
 }
 
 .hero-banner {
@@ -74,14 +119,18 @@ body::-webkit-scrollbar, html::-webkit-scrollbar {
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Imagen de fondo optimizada con overlay para mejor legibilidad */
   background:
-    linear-gradient(rgba(13,27,42,0.6), rgba(13,27,42,0.6)),
-    url('/bg_home.jpg') center/cover no-repeat;
+    linear-gradient(rgba(13,27,42,0.5), rgba(13,27,42,0.7)),
+    url('/src/assets/mountain_bg.webp') center/cover no-repeat;
+  background-attachment: fixed; /* Efecto parallax sutil */
   color: var(--light);
   padding: 0;
   text-align: center;
   position: relative;
   scroll-snap-align: start;
+  /* Mejora visual con sombra de texto */
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
 .hero-banner h1 {
@@ -89,6 +138,10 @@ body::-webkit-scrollbar, html::-webkit-scrollbar {
   font-weight: 700;
   letter-spacing: 1px;
   animation: fadeInDown 1s;
+  /* Mejorar contraste sobre la imagen de montaña */
+  text-shadow: 0 4px 12px rgba(0,0,0,0.6);
+  color: var(--light);
+  margin-bottom: 1rem;
 }
 
 @keyframes fadeInDown {
@@ -100,8 +153,14 @@ body::-webkit-scrollbar, html::-webkit-scrollbar {
   max-width: 600px;
   margin: 1.5rem auto;
   font-size: 1.25rem;
-  color: var(--primary);
+  color: var(--light);
   animation: fadeIn 1.2s;
+  /* Mejorar legibilidad con fondo semi-transparente */
+  background: rgba(13,27,42,0.4);
+  padding: 1rem 2rem;
+  border-radius: 1rem;
+  backdrop-filter: blur(5px);
+  text-shadow: 0 2px 6px rgba(0,0,0,0.4);
 }
 
 @keyframes fadeIn {
@@ -116,12 +175,17 @@ body::-webkit-scrollbar, html::-webkit-scrollbar {
   border-radius: 2rem;
   padding: 0.75rem 2rem;
   font-weight: 500;
-  transition: background 0.3s, transform 0.2s;
+  transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+  /* Mejorar visibilidad del botón */
+  box-shadow: 0 4px 15px rgba(65,90,119,0.4);
+  text-shadow: none;
+  margin-top: 1rem;
 }
 .hero-banner .btn:hover {
   background-color: var(--secondary);
   color: var(--dark);
   transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 20px rgba(119,141,169,0.5);
 }
 
 .footer-main {
@@ -161,7 +225,8 @@ body::-webkit-scrollbar, html::-webkit-scrollbar {
   display: flex;
   align-items: stretch;
   justify-content: center;
-  background: var(--light);
+  /* Cambiar para que no sobrescriba el gradiente de las secciones hijas */
+  background: transparent;
 }
 
 .features-testimonials-inner {
@@ -185,8 +250,34 @@ body::-webkit-scrollbar, html::-webkit-scrollbar {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: transparent;
   padding: 0;
+}
+
+/* Gradientes unificados para ambas secciones - una sola sensación visual */
+.feature-section {
+  background: linear-gradient(
+    180deg,
+    #f8fffe 0%,                    /* Blanco muy suave */
+    rgba(224,245,242,0.6) 30%,     /* Verde agua suave */
+    rgba(207,233,229,0.8) 70%,     /* Verde menta */
+    rgba(207,233,229,0.85) 100%    /* Mantiene el verde menta suave */
+  ) !important;
+  padding: 4rem 0;
+  position: relative;
+}
+
+.testimonial-section {
+  position: relative;
+  z-index: 1;
+  /* Mismo color base que feature-section para unidad visual */
+  background: linear-gradient(
+    180deg,
+    rgba(207,233,229,0.85) 0%,     /* Continúa exactamente igual */
+    rgba(207,233,229,0.9) 30%,     /* Mantiene el verde menta */
+    rgba(207,233,229,0.85) 70%,    /* Color consistente */
+    rgba(224,225,221,1) 100%       /* Solo cambia al final para footer */
+  ) !important;
+  padding: 4rem 0;
 }
 
 .feature-section {
@@ -194,6 +285,27 @@ body::-webkit-scrollbar, html::-webkit-scrollbar {
 }
 .testimonial-section {
   flex: 0.8 1 0;
+}
+
+/* Sin onda al final - transición suave con gradiente */
+
+/* Transición suave del hero banner con gradiente optimizado */
+.hero-banner::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 60px;
+  /* Gradiente suave que se conecta perfectamente con feature-section */
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(248,255,254,0.3) 30%,
+    rgba(248,255,254,0.8) 70%,
+    #f8fffe 100%
+  );
+  z-index: 1;
 }
 
 /* Responsive: apila igual en móvil */
@@ -204,5 +316,26 @@ body::-webkit-scrollbar, html::-webkit-scrollbar {
   .feature-section,
   .testimonial-section {
     min-height: 0;
+  }
+  
+  /* Optimizaciones para móvil del hero banner */
+  .hero-banner {
+    background-attachment: scroll; /* Mejor rendimiento en móvil */
+    padding: 2rem 1rem;
+  }
+  
+  .hero-banner h1 {
+    font-size: 2.5rem;
+  }
+  
+  .hero-banner .lead {
+    font-size: 1.1rem;
+    padding: 0.8rem 1.5rem;
+    margin: 1rem auto;
+  }
+  
+  .hero-banner .btn {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.95rem;
   }
 }
