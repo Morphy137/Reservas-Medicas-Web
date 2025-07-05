@@ -1,6 +1,7 @@
 // src/pages/DoctorListPage.tsx
 import { useState, useMemo } from 'react';
-import { Container, Row, Col, Card, Button, Modal, Badge, Alert, Form, InputGroup } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Modal, Badge, Alert, Form, InputGroup, Toast, ToastContainer } from 'react-bootstrap';
+import { useAuth } from '../hooks/useAuth';
 
 interface Doctor {
   id: number;
@@ -131,6 +132,7 @@ const doctorsData: Doctor[] = [
 ];
 
 const DoctorListPage = () => {
+  const { user } = useAuth();
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>('');
@@ -139,6 +141,11 @@ const DoctorListPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSpecialty, setSelectedSpecialty] = useState('');
   const [selectedDay, setSelectedDay] = useState('');
+
+  // Estados para notificaciones
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error'>('success');
 
   // Obtener especialidades únicas
   const specialties = [...new Set(doctorsData.map(doctor => doctor.specialty))].sort();
@@ -223,8 +230,73 @@ const DoctorListPage = () => {
   };
 
   const handleBookAppointment = (time: string) => {
-    alert(`Cita reservada con ${selectedDoctor?.name} el ${selectedDate} a las ${time}`);
-    setShowModal(false);
+    if (!selectedDoctor || !user) {
+      setToastMessage('Error: Usuario no autenticado');
+      setToastType('error');
+      setShowToast(true);
+      return;
+    }
+
+    try {
+      // Verificar si el usuario ya tiene una cita a la misma hora y fecha
+      const existingAppointments = JSON.parse(localStorage.getItem('patientAppointments') || '[]');
+      const conflictingAppointment = existingAppointments.find((apt: {
+        patientEmail: string;
+        date: string;
+        time: string;
+        status: string;
+      }) => 
+        apt.patientEmail === user.email && 
+        apt.date === selectedDate && 
+        apt.time === time &&
+        apt.status !== 'cancelled' // Solo considerar citas no canceladas
+      );
+
+      if (conflictingAppointment) {
+        setToastMessage(
+          `Ya tienes una cita reservada para el ${new Date(selectedDate).toLocaleDateString('es-ES')} a las ${time}.\n\nNo puedes tener más de una cita en el mismo horario.`
+        );
+        setToastType('error');
+        setShowToast(true);
+        return;
+      }
+
+      // Crear objeto de reserva
+      const newAppointment = {
+        id: Date.now(), // ID temporal único
+        doctorName: selectedDoctor.name,
+        doctorSpecialty: selectedDoctor.specialty,
+        patientName: user.name,
+        patientEmail: user.email,
+        date: selectedDate,
+        time: time,
+        status: 'pending', // Nueva reserva queda pendiente de confirmación
+        type: 'Consulta General',
+        createdAt: new Date().toISOString()
+      };
+
+      // Guardar en localStorage (simulando base de datos)
+      existingAppointments.push(newAppointment);
+      localStorage.setItem('patientAppointments', JSON.stringify(existingAppointments));
+
+      // Mostrar notificación de éxito
+      setToastMessage(
+        `¡Reserva confirmada! \nCita con ${selectedDoctor.name} \nel ${new Date(selectedDate).toLocaleDateString('es-ES', { 
+          weekday: 'long', 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric' 
+        })} a las ${time}. \n\nEstado: Pendiente de confirmación por el doctor.`
+      );
+      setToastType('success');
+      setShowToast(true);
+      
+      setShowModal(false);
+    } catch {
+      setToastMessage('Error al procesar la reserva. Inténtalo de nuevo.');
+      setToastType('error');
+      setShowToast(true);
+    }
   };
 
   const renderStars = (rating: number) => {
@@ -508,6 +580,36 @@ const DoctorListPage = () => {
           }
         `}
       </style>
+
+      {/* Toast para notificaciones */}
+      <ToastContainer 
+        position="top-end" 
+        className="p-3 toast-container" 
+        style={{ 
+          zIndex: 1070,
+          position: 'fixed',
+          top: '80px',
+          right: '20px'
+        }}
+      >
+        <Toast 
+          show={showToast} 
+          onClose={() => setShowToast(false)} 
+          delay={6000}
+          autohide
+          bg={toastType === 'success' ? 'success' : 'danger'}
+          className="text-white"
+        >
+          <Toast.Header>
+            <strong className="me-auto">
+              {toastType === 'success' ? '✅ Reserva Exitosa' : '❌ Error'}
+            </strong>
+          </Toast.Header>
+          <Toast.Body style={{ whiteSpace: 'pre-line' }}>
+            {toastMessage}
+          </Toast.Body>
+        </Toast>
+      </ToastContainer>
     </Container>
   );
 };

@@ -429,49 +429,767 @@ body::-webkit-scrollbar, html::-webkit-scrollbar {
   box-shadow: 0 4px 15px rgba(119,141,169,0.5) !important;
 }
 
-/* Responsive: apila igual en móvil */
-@media (max-width: 900px) {
-  .features-testimonials-stack {
-    min-height: 100vh;
-  }
-  .feature-section,
-  .testimonial-section {
-    min-height: 0;
-  }
-  
-  /* Optimizaciones para móvil del hero banner */
-  .hero-banner {
-    background-attachment: scroll; /* Mejor rendimiento en móvil */
-    padding: 2rem 1rem;
-  }
-  
-  .hero-banner h1 {
-    font-size: 2.5rem;
-  }
-  
-  .hero-banner .lead {
-    font-size: 1.1rem;
-    padding: 0.8rem 1.5rem;
-    margin: 1rem auto;
-  }
-  
-  .hero-banner .btn {
-    padding: 0.6rem 1.5rem;
-    font-size: 0.95rem;
+/* Barra separadora en el navbar */
+.navbar-divider {
+  width: 1px;
+  height: 30px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(119,141,169,0.3) 20%,
+    rgba(119,141,169,0.6) 50%,
+    rgba(119,141,169,0.3) 80%,
+    transparent 100%
+  );
+  margin: 0 1rem;
+  align-self: center;
+}
+
+/* Dropdown de usuario mejorado */
+.user-dropdown-toggle {
+  position: relative;
+  font-weight: 500 !important;
+  padding: 0.6rem 1.2rem !important;
+  border-radius: 0.5rem !important;
+  transition: all 0.3s ease !important;
+}
+
+.user-dropdown-toggle:hover {
+  background: rgba(119,141,169,0.2) !important;
+  color: var(--secondary) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(119,141,169,0.2);
+}
+
+/* Estilo para la flecha automática del dropdown */
+.user-dropdown-toggle::after {
+  margin-left: 0.5rem !important;
+  font-size: 0.8rem !important;
+  transition: transform 0.3s ease !important;
+}
+
+.user-dropdown-toggle:hover::after {
+  transform: scale(1.1) !important;
+}
+
+/* Responsive para la barra separadora */
+@media (max-width: 991px) {
+  .navbar-divider {
+    display: none;
   }
 }
 
-@media (max-width: 991px) {
-  .custom-navbar {
-    padding: 0.5rem 0;
+/* ===== ESTILOS DEL LOGIN PAGE ===== */
+
+.login-page-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 0; /* Override del body padding-top */
+}
+
+.login-hero-section {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Fondo similar al hero banner pero más sutil para el login */
+  background:
+    linear-gradient(135deg, rgba(13,27,42,0.6), rgba(65,90,119,0.7)),
+    radial-gradient(circle at 30% 40%, rgba(224,245,242,0.1) 0%, transparent 60%),
+    radial-gradient(circle at 70% 60%, rgba(188,221,216,0.08) 0%, transparent 60%),
+    var(--light);
+  position: relative;
+  padding: 2rem 1rem;
+}
+
+.login-content-wrapper {
+  width: 100%;
+  max-width: 28rem;
+  position: relative;
+  z-index: 10;
+}
+
+.login-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 3rem 2rem;
+  box-shadow: 
+    0 25px 50px rgba(13,27,42,0.15),
+    0 0 0 1px rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.18);
+  transition: all 0.3s ease;
+}
+
+.login-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 32px 64px rgba(13,27,42,0.2),
+    0 0 0 1px rgba(255,255,255,0.25);
+}
+
+.login-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.login-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.login-logo::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  z-index: -1;
+  filter: blur(8px);
+  opacity: 0.3;
+}
+
+.login-logo-icon {
+  font-size: 1.75rem;
+  color: white;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.login-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 0.5rem;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.login-subtitle {
+  color: var(--secondary);
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: flex;
+  align-items: center;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 0.5rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  font-size: 0.95rem;
+  border: 2px solid rgba(65,90,119,0.1);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.8);
+  transition: all 0.3s ease;
+  color: var(--dark);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: rgba(255,255,255,0.95);
+  box-shadow: 
+    0 0 0 3px rgba(65,90,119,0.1),
+    0 4px 12px rgba(65,90,119,0.05);
+  transform: translateY(-1px);
+}
+
+.form-input::placeholder {
+  color: rgba(65,90,119,0.5);
+}
+
+.form-input:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  background: rgba(224,225,221,0.3);
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  padding: 0.875rem 1rem;
+  background: rgba(220,38,38,0.1);
+  border: 1px solid rgba(220,38,38,0.2);
+  border-radius: 8px;
+  color: #dc2626;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+}
+
+.login-button {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--secondary), var(--primary));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.login-button:hover::before {
+  opacity: 1;
+}
+
+.login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(65,90,119,0.3);
+}
+
+.login-button:active {
+  transform: translateY(0);
+}
+
+.login-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.login-button * {
+  position: relative;
+  z-index: 1;
+}
+
+.loading-content {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.spinner {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.login-divider {
+  display: flex;
+  align-items: center;
+  margin: 2rem 0;
+  position: relative;
+}
+
+.login-divider::before {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(65,90,119,0.2), transparent);
+}
+
+.login-divider span {
+  padding: 0 1rem;
+  color: var(--secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: rgba(255,255,255,0.95);
+}
+
+.test-users-section {
+  margin-top: 1.5rem;
+}
+
+.test-users-toggle {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--primary);
+  background: rgba(65,90,119,0.05);
+  border: 1px solid rgba(65,90,119,0.1);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.test-users-toggle:hover {
+  background: rgba(65,90,119,0.1);
+  border-color: rgba(65,90,119,0.2);
+}
+
+.test-users-grid {
+  margin-top: 1rem;
+}
+
+.test-users-description {
+  font-size: 0.8rem;
+  color: var(--secondary);
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.test-user-card {
+  width: 100%;
+  padding: 1rem;
+  background: rgba(255,255,255,0.7);
+  border: 1px solid rgba(65,90,119,0.1);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-align: left;
+  margin-bottom: 0.75rem;
+}
+
+.test-user-card:hover {
+  background: rgba(255,255,255,0.9);
+  border-color: rgba(65,90,119,0.2);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(65,90,119,0.1);
+}
+
+.test-user-card:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.test-user-icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.test-user-info {
+  flex: 1;
+}
+
+.test-user-role {
+  font-weight: 600;
+  color: var(--dark);
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.test-user-email {
+  font-size: 0.8rem;
+  color: var(--secondary);
+}
+
+.test-user-arrow {
+  color: var(--secondary);
+  opacity: 0.5;
+  transition: all 0.3s ease;
+}
+
+.test-user-card:hover .test-user-arrow {
+  opacity: 1;
+  transform: translateX(2px);
+}
+
+/* ===== DOCTOR DASHBOARD STYLES ===== */
+.doctor-dashboard {
+  background: linear-gradient(135deg, #415a77 0%, #778da9 50%, #e0e1dd 100%);
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Barra lateral de estadísticas */
+.stats-sidebar {
+  position: fixed;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stats-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 0.75rem;
+  text-align: center;
+  min-width: 80px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.stats-card:hover {
+  transform: translateX(-5px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.stats-icon {
+  font-size: 1.2rem;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+.stats-number {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.stats-label {
+  font-size: 0.7rem;
+  color: #6c757d;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Responsive para stats sidebar */
+@media (max-width: 768px) {
+  .stats-sidebar {
+    position: static;
+    transform: none;
+    right: auto;
+    top: auto;
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: 1rem;
+    padding: 0 1rem;
   }
   
-  .nav-link-modern {
-    margin: 0.2rem 0 !important;
-    text-align: center;
+  .stats-card {
+    min-width: 70px;
+    padding: 0.5rem;
   }
   
-  .brand-modern {
-    font-size: 1.3rem !important;
+  .stats-number {
+    font-size: 1.2rem;
   }
+  
+  .stats-label {
+    font-size: 0.65rem;
+  }
+}
+
+.dashboard-header .glass-card {
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 8px 32px 0 rgba(65, 90, 119, 0.37);
+}
+
+.dashboard-header h1 {
+  background: linear-gradient(45deg, #415a77, #778da9);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Cards del horario semanal */
+.doctor-dashboard .glass-card {
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.doctor-dashboard .glass-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+/* Header de las cards de días */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #415a77 0%, #778da9 100%) !important;
+}
+
+/* Cards de citas individuales */
+.appointment-card {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(65, 90, 119, 0.2) !important;
+  transition: all 0.2s ease;
+}
+
+.appointment-card:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(65, 90, 119, 0.4) !important;
+  transform: translateX(5px);
+}
+
+/* Botones de acción de citas */
+.appointment-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.appointment-actions .action-btn {
+  border-radius: 8px !important;
+  width: 32px !important;
+  height: 32px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  font-size: 0.85rem !important;
+  transition: all 0.2s ease !important;
+  border-width: 1.5px !important;
+}
+
+.appointment-actions .action-btn:hover {
+  transform: scale(1.05) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+.appointment-actions .action-btn:active {
+  transform: scale(0.95) !important;
+}
+
+/* Colores específicos para cada botón */
+.appointment-actions .btn-outline-primary:hover {
+  background-color: #415a77 !important;
+  border-color: #415a77 !important;
+}
+
+.appointment-actions .btn-outline-danger:hover {
+  background-color: #dc3545 !important;
+  border-color: #dc3545 !important;
+}
+
+/* Iconos y colores */
+.doctor-dashboard .text-primary {
+  color: #415a77 !important;
+}
+
+.doctor-dashboard .appointment-time h6 {
+  color: #415a77 !important;
+}
+
+/* Badges de estado personalizados */
+.doctor-dashboard .badge {
+  font-size: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 20px;
+}
+
+/* Cards de estadísticas */
+.doctor-dashboard .glass-card .card-body {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+/* Toast notifications específicas para dashboard */
+.doctor-dashboard .toast-container {
+  position: fixed !important;
+  top: 80px !important;
+  right: 20px !important;
+  z-index: 1070 !important;
+}
+
+.doctor-dashboard .toast {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Responsive para toast notifications */
+@media (max-width: 768px) {
+  .doctor-dashboard .toast-container {
+    top: 70px !important;
+    right: 10px !important;
+    left: 10px !important;
+    right: 10px !important;
+  }
+  
+  .doctor-dashboard .toast {
+    width: 100% !important;
+    max-width: calc(100vw - 20px) !important;
+  }
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.doctor-dashboard .card {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.doctor-dashboard .card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.doctor-dashboard .card:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.doctor-dashboard .card:nth-child(4) {
+  animation-delay: 0.3s;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .doctor-dashboard .dashboard-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .appointment-card {
+    margin-bottom: 1rem !important;
+  }
+}
+
+/* Estilos para notificaciones de reservas del paciente */
+.toast-container .toast {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.toast-container .toast.bg-success {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+}
+
+.toast-container .toast.bg-danger {
+  background: linear-gradient(135deg, #dc3545 0%, #fd7e14 100%) !important;
+}
+
+.toast-container .toast-header {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+}
+
+.toast-container .toast-body {
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* Estilos para la página de reservas del paciente */
+.appointment-card {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border-radius: 15px !important;
+}
+
+.appointment-card:hover {
+  background: rgba(255, 255, 255, 1) !important;
+}
+
+.appointment-details p {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.appointment-details .badge {
+  font-size: 0.8rem;
+}
+
+/* Barra lateral de estadísticas - similar al dashboard doctor */
+.booking-sidebar .card {
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border-radius: 15px !important;
+  transition: transform 0.2s ease;
+}
+
+.booking-sidebar .card:hover {
+  transform: translateY(-2px);
+}
+
+.booking-sidebar .card-header {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Responsive para las tarjetas de citas */
+@media (max-width: 768px) {
+  .appointment-card .d-flex.gap-2 {
+    flex-direction: column;
+    gap: 0.5rem !important;
+  }
+  
+  .appointment-card .d-flex.gap-2 .btn {
+    width: 100%;
+  }
+  
+  /* En móvil, la barra lateral va arriba */
+  .booking-sidebar {
+    order: -1;
+    margin-bottom: 2rem;
+  }
+}
+
+/* Estadísticas individuales */
+.booking-sidebar .p-3 {
+  border-radius: 10px !important;
+  transition: transform 0.2s ease;
+}
+
+.booking-sidebar .p-3:hover {
+  transform: scale(1.02);
 }
