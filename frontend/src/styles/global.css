@@ -790,7 +790,6 @@ body::-webkit-scrollbar, html::-webkit-scrollbar {
 .test-user-card:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-  transform: none;
 }
 
 .test-user-icon {
@@ -1187,4 +1186,104 @@ body::-webkit-scrollbar, html::-webkit-scrollbar {
 
 .booking-sidebar .p-3:hover {
   transform: scale(1.02);
+}
+
+/* ===== ADMIN DASHBOARD STYLES ===== */
+.admin-dashboard {
+  background: linear-gradient(135deg, #415a77 0%, #778da9 50%, #e0e1dd 100%);
+  min-height: 100vh;
+  position: relative;
+}
+
+.admin-dashboard .nav-tabs {
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.admin-dashboard .nav-tabs .nav-link {
+  color: #415a77;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  margin-right: 0.5rem;
+  border-radius: 0.5rem 0.5rem 0 0;
+  transition: all 0.3s ease;
+}
+
+.admin-dashboard .nav-tabs .nav-link:hover {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(65, 90, 119, 0.3);
+  transform: translateY(-2px);
+}
+
+.admin-dashboard .nav-tabs .nav-link.active {
+  background: linear-gradient(135deg, #415a77, #778da9);
+  color: white;
+  border-color: #415a77;
+  box-shadow: 0 4px 12px rgba(65, 90, 119, 0.3);
+}
+
+.admin-dashboard .table {
+  background: rgba(255, 255, 255, 0.98);
+}
+
+.admin-dashboard .table thead th {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef) !important;
+  border-bottom: 2px solid #415a77;
+  color: #415a77;
+  font-weight: 600;
+}
+
+.admin-dashboard .table tbody tr:hover {
+  background: rgba(65, 90, 119, 0.05);
+}
+
+.admin-dashboard .modal-content {
+  border: none;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.admin-dashboard .modal-header {
+  background: linear-gradient(135deg, #415a77, #778da9);
+  color: white;
+  border-bottom: none;
+}
+
+.admin-dashboard .btn-primary {
+  background: linear-gradient(135deg, #415a77, #778da9);
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.admin-dashboard .btn-primary:hover {
+  background: linear-gradient(135deg, #778da9, #415a77);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(65, 90, 119, 0.4);
+}
+
+.admin-dashboard .btn-outline-primary:hover {
+  background: #415a77;
+  border-color: #415a77;
+}
+
+.admin-dashboard .btn-outline-danger:hover {
+  background: #dc3545;
+  border-color: #dc3545;
+}
+
+/* Responsive para AdminDashboard */
+@media (max-width: 768px) {
+  .admin-dashboard .table-responsive {
+    font-size: 0.9rem;
+  }
+  
+  .admin-dashboard .modal-dialog {
+    margin: 0.5rem;
+  }
+  
+  .admin-dashboard .btn-group {
+    flex-direction: column;
+  }
+  
+  .admin-dashboard .btn-group .btn {
+    margin-bottom: 0.25rem;
+  }
 }

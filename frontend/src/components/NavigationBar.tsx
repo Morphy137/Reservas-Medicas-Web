@@ -65,6 +65,17 @@ const NavigationBar = () => {
                                         Dashboard
                                     </Nav.Link>
                                 )}
+                                
+                                {user?.role === 'admin' && (
+                                    <Nav.Link 
+                                        as={Link} 
+                                        to="/admin" 
+                                        className={`nav-link-modern ${location.pathname === '/admin' ? 'active' : ''}`}
+                                    >
+                                        <i className="bi bi-gear me-1"></i>
+                                        Administración
+                                    </Nav.Link>
+                                )}
                             </>
                         )}
                         

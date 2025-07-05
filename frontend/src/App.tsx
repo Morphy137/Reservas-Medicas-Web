@@ -4,6 +4,7 @@ import HomePage from './pages/HomePage';
 import DoctorListPage from './pages/DoctorListPage';
 import BookingPage from './pages/BookingPage';
 import DoctorDashboard from './pages/DoctorDashboard';
+import AdminDashboard from './pages/AdminDashboard';
 import LoginPage from './pages/LoginPage';
 import NavigationBar from './components/NavigationBar';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -50,6 +51,14 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['doctor', 'admin']}>
                 <DoctorDashboard />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/admin" 
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AdminDashboard />
               </ProtectedRoute>
             } 
           />

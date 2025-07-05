@@ -1,5 +1,5 @@
 // src/pages/DoctorListPage.tsx
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Modal, Badge, Alert, Form, InputGroup, Toast, ToastContainer } from 'react-bootstrap';
 import { useAuth } from '../hooks/useAuth';
 
@@ -11,6 +11,8 @@ interface Doctor {
   rating: number;
   image: string;
   availableDays: string[];
+  timeSlots?: string[];
+  isActive?: boolean;
 }
 
 interface TimeSlot {
@@ -136,6 +138,7 @@ const DoctorListPage = () => {
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [selectedDate, setSelectedDate] = useState<string>('');
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
   
   // Estados de filtros
   const [searchTerm, setSearchTerm] = useState('');
@@ -147,8 +150,32 @@ const DoctorListPage = () => {
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error'>('success');
 
-  // Obtener especialidades únicas
-  const specialties = [...new Set(doctorsData.map(doctor => doctor.specialty))].sort();
+  // Cargar médicos al inicializar
+  useEffect(() => {
+    loadDoctors();
+  }, []);
+
+  const loadDoctors = () => {
+    try {
+      // Intentar cargar médicos del administrador primero
+      const adminDoctors = JSON.parse(localStorage.getItem('adminDoctors') || '[]');
+      
+      if (adminDoctors.length > 0) {
+        // Usar médicos del administrador si existen
+        setDoctors(adminDoctors.filter((doctor: Doctor) => doctor.isActive));
+      } else {
+        // Usar datos por defecto si no hay médicos del admin
+        setDoctors(doctorsData);
+      }
+    } catch (error) {
+      console.error('Error loading doctors:', error);
+      // En caso de error, usar datos por defecto
+      setDoctors(doctorsData);
+    }
+  };
+
+  // Obtener especialidades únicas de los médicos actuales
+  const specialties = [...new Set(doctors.map(doctor => doctor.specialty))].sort();
   
   // Obtener días únicos de la semana
   const weekDays = [
@@ -163,7 +190,7 @@ const DoctorListPage = () => {
 
   // Filtrar doctores
   const filteredDoctors = useMemo(() => {
-    return doctorsData.filter(doctor => {
+    return doctors.filter(doctor => {
       // Filtro por nombre
       const matchesSearch = doctor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                            doctor.specialty.toLowerCase().includes(searchTerm.toLowerCase());
@@ -179,7 +206,7 @@ const DoctorListPage = () => {
       
       return matchesSearch && matchesSpecialty && matchesDay;
     });
-  }, [searchTerm, selectedSpecialty, selectedDay]);
+  }, [doctors, searchTerm, selectedSpecialty, selectedDay]);
 
   // Limpiar filtros
   const clearFilters = () => {
@@ -190,12 +217,23 @@ const DoctorListPage = () => {
 
   // Horarios fijos para cada doctor
   const getTimeSlots = (doctorId: number): TimeSlot[] => {
-    const baseSlots = [
-      "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
-      "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00"
-    ];
+    // Buscar el doctor en la lista actual
+    const doctor = doctors.find(d => d.id === doctorId);
+    
+    let baseSlots: string[] = [];
+    
+    if (doctor && doctor.timeSlots && doctor.timeSlots.length > 0) {
+      // Usar horarios definidos por el administrador
+      baseSlots = doctor.timeSlots;
+    } else {
+      // Usar horarios por defecto
+      baseSlots = [
+        "09:00", "09:30", "10:00", "10:30", "11:00", "11:30",
+        "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00"
+      ];
+    }
 
-    // Horarios ocupados predefinidos para cada doctor
+    // Horarios ocupados predefinidos para cada doctor (simulando reservas existentes)
     const occupiedSlots: { [key: number]: string[] } = {
       1: ["09:30", "11:00", "15:00"], // Dr. María González
       2: ["10:00", "14:30", "16:00"], // Dr. Juan Pérez
@@ -380,7 +418,7 @@ const DoctorListPage = () => {
       {/* Resultados */}
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h5 className="mb-0" style={{ color: '#ffffff' }}>
-          Mostrando {filteredDoctors.length} de {doctorsData.length} especialistas
+          Mostrando {filteredDoctors.length} de {doctors.length} especialistas
         </h5>
         {filteredDoctors.length === 0 && (
           <Badge bg="warning" className="rounded-pill">
