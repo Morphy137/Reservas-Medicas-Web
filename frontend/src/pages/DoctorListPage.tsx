@@ -304,11 +304,12 @@ const DoctorListPage = () => {
   };
 
   return (
-    <Container className="py-5">
-      <div className="text-center mb-5">
-        <h1 className="display-4 fw-bold" style={{ color: '#2d3748' }}>Nuestros Especialistas</h1>
-        <p className="lead text-muted">Encuentra al profesional médico ideal para tu consulta</p>
-      </div>
+    <div className="doctor-list-page">
+      <Container className="py-5">
+        <div className="text-center mb-5">
+          <h1 className="display-4 fw-bold" style={{ color: '#ffffff' }}>Nuestros Especialistas</h1>
+          <p className="lead" style={{ color: '#f8f9fa' }}>Encuentra al profesional médico ideal para tu consulta</p>
+        </div>
 
       {/* Panel de Filtros */}
       <Card className="mb-4 shadow-sm border-0">
@@ -378,7 +379,7 @@ const DoctorListPage = () => {
 
       {/* Resultados */}
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h5 className="text-muted mb-0">
+        <h5 className="mb-0" style={{ color: '#ffffff' }}>
           Mostrando {filteredDoctors.length} de {doctorsData.length} especialistas
         </h5>
         {filteredDoctors.length === 0 && (
@@ -457,10 +458,10 @@ const DoctorListPage = () => {
       {filteredDoctors.length === 0 && (
         <div className="text-center py-5">
           <div className="mb-4">
-            <i className="bi bi-search display-1 text-muted"></i>
+            <i className="bi bi-search display-1" style={{ color: '#ffffff' }}></i>
           </div>
-          <h4 className="text-muted mb-3">No se encontraron especialistas</h4>
-          <p className="text-muted mb-4">
+          <h4 className="mb-3" style={{ color: '#ffffff' }}>No se encontraron especialistas</h4>
+          <p className="mb-4" style={{ color: '#f8f9fa' }}>
             Intenta ajustar los filtros o buscar con términos diferentes
           </p>
           <Button 
@@ -633,6 +634,7 @@ const DoctorListPage = () => {
         </Toast>
       </ToastContainer>
     </Container>
+    </div>
   );
 };
 

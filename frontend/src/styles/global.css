@@ -252,15 +252,9 @@ body::-webkit-scrollbar, html::-webkit-scrollbar {
   padding: 0;
 }
 
-/* Gradientes unificados para ambas secciones - una sola sensación visual */
+/* Gradiente continuo distribuido entre ambas secciones */
 .feature-section {
-  background: linear-gradient(
-    180deg,
-    #f8fffe 0%,                    /* Blanco muy suave */
-    rgba(224,245,242,0.6) 30%,     /* Verde agua suave */
-    rgba(207,233,229,0.8) 70%,     /* Verde menta */
-    rgba(207,233,229,0.85) 100%    /* Mantiene el verde menta suave */
-  ) !important;
+  background: linear-gradient(180deg, #415a77 0%, #778da9 80%, #e0e1dd 100%) !important;
   padding: 4rem 0;
   position: relative;
 }
@@ -268,14 +262,8 @@ body::-webkit-scrollbar, html::-webkit-scrollbar {
 .testimonial-section {
   position: relative;
   z-index: 1;
-  /* Mismo color base que feature-section para unidad visual */
-  background: linear-gradient(
-    180deg,
-    rgba(207,233,229,0.85) 0%,     /* Continúa exactamente igual */
-    rgba(207,233,229,0.9) 30%,     /* Mantiene el verde menta */
-    rgba(207,233,229,0.85) 70%,    /* Color consistente */
-    rgba(224,225,221,1) 100%       /* Solo cambia al final para footer */
-  ) !important;
+  /* Continúa el gradiente desde donde termina feature-section */
+  background: linear-gradient(180deg, #e0e1dd 0%, #e0e1dd 100%) !important;
   padding: 4rem 0;
 }
 
@@ -288,7 +276,7 @@ body::-webkit-scrollbar, html::-webkit-scrollbar {
 
 /* Sin onda al final - transición suave con gradiente */
 
-/* Transición suave del hero banner con gradiente optimizado */
+/* Transición suave del hero banner con gradiente que conecta al azul */
 .hero-banner::after {
   content: '';
   position: absolute;
@@ -296,13 +284,13 @@ body::-webkit-scrollbar, html::-webkit-scrollbar {
   left: 0;
   width: 100%;
   height: 60px;
-  /* Gradiente suave que se conecta perfectamente con feature-section */
+  /* Gradiente suave que se conecta perfectamente con feature-section azul */
   background: linear-gradient(
     180deg,
     transparent 0%,
-    rgba(248,255,254,0.3) 30%,
-    rgba(248,255,254,0.8) 70%,
-    #f8fffe 100%
+    rgba(65,90,119,0.1) 30%,
+    rgba(65,90,119,0.3) 70%,
+    #415a77 100%
   );
   z-index: 1;
 }
@@ -842,6 +830,13 @@ body::-webkit-scrollbar, html::-webkit-scrollbar {
 .test-user-card:hover .test-user-arrow {
   opacity: 1;
   transform: translateX(2px);
+}
+
+/* ===== DOCTOR LIST PAGE STYLES ===== */
+.doctor-list-page {
+  background: linear-gradient(135deg, #415a77 0%, #778da9 50%, #e0e1dd 100%);
+  min-height: 100vh;
+  position: relative;
 }
 
 /* ===== DOCTOR DASHBOARD STYLES ===== */
