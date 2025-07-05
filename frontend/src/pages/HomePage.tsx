@@ -1,5 +1,4 @@
 // src/pages/HomePage.tsx
-import React from 'react';
 import HeroBanner from '../components/HeroBanner';
 import FeatureSection from '../components/FeatureSection';
 import TestimonialSection from '../components/TestimonialSection';

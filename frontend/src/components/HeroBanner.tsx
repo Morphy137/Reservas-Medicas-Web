@@ -1,5 +1,4 @@
 // src/components/HeroBanner.tsx
-import React from 'react';
 import { Container, Button } from 'react-bootstrap';
 
 const HeroBanner = () => {

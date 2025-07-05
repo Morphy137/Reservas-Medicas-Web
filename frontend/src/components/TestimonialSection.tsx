@@ -1,5 +1,4 @@
 // src/components/TestimonialSection.tsx
-import React from 'react';
 import { Container, Carousel } from 'react-bootstrap';
 
 const testimonials = [

@@ -27,16 +27,16 @@ const doctorsData: Doctor[] = [
     specialty: "Cardiología",
     experience: "10 años de experiencia",
     rating: 4.8,
-    image: "https://placehold.co/300x250/FF6B6B/FFFFFF?text=❤️+Cardiología",
+    image: "https://placehold.co/300x250/4a5568/FFFFFF?text=❤️+Cardiología",
     availableDays: ["2025-07-07", "2025-07-08", "2025-07-09"]
   },
   {
     id: 2,
-    name: "Dr. Carlos Rodríguez",
+    name: "Dr. Juan Pérez",
     specialty: "Neurología",
     experience: "15 años de experiencia",
     rating: 4.9,
-    image: "https://placehold.co/300x250/4ECDC4/FFFFFF?text=🧠+Neurología",
+    image: "https://placehold.co/300x250/2d3748/FFFFFF?text=🧠+Neurología",
     availableDays: ["2025-07-07", "2025-07-10", "2025-07-11"]
   },
   {
@@ -45,7 +45,7 @@ const doctorsData: Doctor[] = [
     specialty: "Pediatría",
     experience: "8 años de experiencia",
     rating: 4.7,
-    image: "https://placehold.co/300x250/FFD93D/FFFFFF?text=🧸+Pediatría",
+    image: "https://placehold.co/300x250/2b6cb8/FFFFFF?text=🧸+Pediatría",
     availableDays: ["2025-07-08", "2025-07-09", "2025-07-12"]
   },
   {
@@ -54,7 +54,7 @@ const doctorsData: Doctor[] = [
     specialty: "Dermatología",
     experience: "12 años de experiencia",
     rating: 4.6,
-    image: "https://placehold.co/300x250/A8E6CF/FFFFFF?text=✨+Dermatología",
+    image: "https://placehold.co/300x250/38a169/FFFFFF?text=✨+Dermatología",
     availableDays: ["2025-07-07", "2025-07-09", "2025-07-11"]
   },
   {
@@ -63,7 +63,7 @@ const doctorsData: Doctor[] = [
     specialty: "Ginecología",
     experience: "18 años de experiencia",
     rating: 4.9,
-    image: "https://placehold.co/300x250/FF8B94/FFFFFF?text=🌸+Ginecología",
+    image: "https://placehold.co/300x250/319795/FFFFFF?text=🌸+Ginecología",
     availableDays: ["2025-07-08", "2025-07-10", "2025-07-12"]
   },
   {
@@ -72,7 +72,7 @@ const doctorsData: Doctor[] = [
     specialty: "Traumatología",
     experience: "14 años de experiencia",
     rating: 4.5,
-    image: "https://placehold.co/300x250/6C5CE7/FFFFFF?text=🦴+Traumatología",
+    image: "https://placehold.co/300x250/553c9a/FFFFFF?text=🦴+Traumatología",
     availableDays: ["2025-07-07", "2025-07-08", "2025-07-10"]
   },
   {
@@ -81,7 +81,7 @@ const doctorsData: Doctor[] = [
     specialty: "Oftalmología",
     experience: "9 años de experiencia",
     rating: 4.7,
-    image: "https://placehold.co/300x250/74B9FF/FFFFFF?text=�️+Oftalmología",
+    image: "https://placehold.co/300x250/718096/FFFFFF?text=👁️+Oftalmología",
     availableDays: ["2025-07-09", "2025-07-11", "2025-07-12"]
   },
   {
@@ -90,7 +90,7 @@ const doctorsData: Doctor[] = [
     specialty: "Psiquiatría",
     experience: "20 años de experiencia",
     rating: 4.8,
-    image: "https://placehold.co/300x250/A29BFE/FFFFFF?text=🧘+Psiquiatría",
+    image: "https://placehold.co/300x250/44337a/FFFFFF?text=🧘+Psiquiatría",
     availableDays: ["2025-07-07", "2025-07-10", "2025-07-11"]
   },
   {
@@ -99,7 +99,7 @@ const doctorsData: Doctor[] = [
     specialty: "Endocrinología",
     experience: "11 años de experiencia",
     rating: 4.6,
-    image: "https://placehold.co/300x250/FD79A8/FFFFFF?text=⚖️+Endocrinología",
+    image: "https://placehold.co/300x250/2c7a7b/FFFFFF?text=⚖️+Endocrinología",
     availableDays: ["2025-07-08", "2025-07-09", "2025-07-12"]
   },
   {
@@ -108,7 +108,7 @@ const doctorsData: Doctor[] = [
     specialty: "Urología",
     experience: "16 años de experiencia",
     rating: 4.7,
-    image: "https://placehold.co/300x250/00CEC9/FFFFFF?text=�+Urología",
+    image: "https://placehold.co/300x250/1a4480/FFFFFF?text=🩺+Urología",
     availableDays: ["2025-07-07", "2025-07-09", "2025-07-10"]
   },
   {
@@ -117,7 +117,7 @@ const doctorsData: Doctor[] = [
     specialty: "Cardiología",
     experience: "13 años de experiencia",
     rating: 4.8,
-    image: "https://placehold.co/300x250/E17055/FFFFFF?text=�+Cardiología",
+    image: "https://placehold.co/300x250/2f855a/FFFFFF?text=💖+Cardiología",
     availableDays: ["2025-07-08", "2025-07-11", "2025-07-12"]
   },
   {
@@ -126,7 +126,7 @@ const doctorsData: Doctor[] = [
     specialty: "Gastroenterología",
     experience: "7 años de experiencia",
     rating: 4.4,
-    image: "https://placehold.co/300x250/55A3FF/FFFFFF?text=🫃+Gastroenterología",
+    image: "https://placehold.co/300x250/6b46c1/FFFFFF?text=🫃+Gastroenterología",
     availableDays: ["2025-07-07", "2025-07-08", "2025-07-09"]
   }
 ];
@@ -198,7 +198,7 @@ const DoctorListPage = () => {
     // Horarios ocupados predefinidos para cada doctor
     const occupiedSlots: { [key: number]: string[] } = {
       1: ["09:30", "11:00", "15:00"], // Dr. María González
-      2: ["10:00", "14:30", "16:00"], // Dr. Carlos Rodríguez
+      2: ["10:00", "14:30", "16:00"], // Dr. Juan Pérez
       3: ["09:00", "10:30", "15:30"], // Dra. Ana Martínez
       4: ["11:30", "14:00", "16:30"], // Dr. Luis Fernández
       5: ["09:30", "15:00", "17:00"], // Dra. Carmen Silva
@@ -306,7 +306,7 @@ const DoctorListPage = () => {
   return (
     <Container className="py-5">
       <div className="text-center mb-5">
-        <h1 className="display-4 fw-bold text-primary">Nuestros Especialistas</h1>
+        <h1 className="display-4 fw-bold" style={{ color: '#2d3748' }}>Nuestros Especialistas</h1>
         <p className="lead text-muted">Encuentra al profesional médico ideal para tu consulta</p>
       </div>
 
@@ -407,16 +407,19 @@ const DoctorListPage = () => {
                   loading="lazy"
                 />
                 <Badge 
-                  bg="primary" 
-                  className="position-absolute top-0 end-0 m-3"
-                  style={{ fontSize: '0.8rem' }}
+                  className="position-absolute top-0 end-0 m-3 text-white"
+                  style={{ 
+                    fontSize: '0.8rem',
+                    background: 'linear-gradient(135deg, #4a5568 0%, #2d3748 100%)',
+                    border: 'none'
+                  }}
                 >
                   {doctor.rating} {renderStars(doctor.rating)}
                 </Badge>
               </div>
               
               <Card.Body className="d-flex flex-column">
-                <Card.Title className="text-primary fw-bold">{doctor.name}</Card.Title>
+                <Card.Title className="fw-bold" style={{ color: '#2d3748' }}>{doctor.name}</Card.Title>
                 <Card.Subtitle className="mb-2 text-success fw-semibold">
                   {doctor.specialty}
                 </Card.Subtitle>
@@ -436,8 +439,10 @@ const DoctorListPage = () => {
                 </div>
                 
                 <Button 
-                  variant="primary" 
-                  className="w-100 fw-semibold"
+                  className="w-100 fw-semibold text-white border-0"
+                  style={{
+                    background: 'linear-gradient(135deg, #4a5568 0%, #2d3748 100%)'
+                  }}
                   onClick={() => handleDoctorSelect(doctor)}
                 >
                   Ver Horarios Disponibles
@@ -458,7 +463,13 @@ const DoctorListPage = () => {
           <p className="text-muted mb-4">
             Intenta ajustar los filtros o buscar con términos diferentes
           </p>
-          <Button variant="primary" onClick={clearFilters} className="rounded-pill">
+          <Button 
+            onClick={clearFilters} 
+            className="rounded-pill text-white border-0"
+            style={{
+              background: 'linear-gradient(135deg, #4a5568 0%, #2d3748 100%)'
+            }}
+          >
             <i className="bi bi-arrow-clockwise me-2"></i>Limpiar todos los filtros
           </Button>
         </div>
@@ -472,7 +483,14 @@ const DoctorListPage = () => {
         centered
         backdrop="static"
       >
-        <Modal.Header closeButton className="bg-primary text-white">
+        <Modal.Header 
+          closeButton 
+          className="text-white"
+          style={{
+            background: 'linear-gradient(135deg, #4a5568 0%, #2d3748 100%)',
+            border: 'none'
+          }}
+        >
           <Modal.Title>
             <div className="d-flex align-items-center">
               <div>
@@ -493,10 +511,14 @@ const DoctorListPage = () => {
                   {selectedDoctor.availableDays.map((day) => (
                     <Button
                       key={day}
-                      variant={selectedDate === day ? "primary" : "outline-primary"}
+                      variant={selectedDate === day ? "dark" : "outline-dark"}
                       size="sm"
                       onClick={() => setSelectedDate(day)}
                       className="rounded-pill"
+                      style={selectedDate === day ? {
+                        background: 'linear-gradient(135deg, #4a5568 0%, #2d3748 100%)',
+                        border: 'none'
+                      } : {}}
                     >
                       {new Date(day).toLocaleDateString('es-ES', { 
                         weekday: 'short', 

@@ -351,7 +351,7 @@ const BookingPage = () => {
           <Col lg={3}>
             <div className="position-sticky" style={{ top: '100px' }}>
               {/* Estadísticas con stats-card */}
-              <div className="patient-stats-sidebar">
+              <div className="stats-sidebar">
                 <div className="stats-card mb-2">
                   <FaCheckCircle className="stats-icon text-success" />
                   <div className="stats-number">{appointments.filter(apt => apt.status === 'confirmed').length}</div>
@@ -530,51 +530,6 @@ const BookingPage = () => {
             transform: translateY(-4px);
             box-shadow: 0 16px 48px rgba(13,27,42,0.12), 0 4px 16px rgba(65,90,119,0.15) !important;
             background: linear-gradient(145deg, rgba(255,255,255,1) 0%, rgba(248,250,252,1) 100%) !important;
-          }
-
-          .patient-stats-sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-          }
-
-          .patient-stats-sidebar .stats-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            padding: 0.75rem;
-            text-align: center;
-            min-width: 80px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-          }
-
-          .patient-stats-sidebar .stats-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
-          }
-
-          .patient-stats-sidebar .stats-icon {
-            font-size: 1.2rem;
-            margin-bottom: 0.25rem;
-            display: block;
-          }
-
-          .patient-stats-sidebar .stats-number {
-            font-size: 1.5rem;
-            font-weight: 700;
-            line-height: 1;
-            margin-bottom: 0.25rem;
-          }
-
-          .patient-stats-sidebar .stats-label {
-            font-size: 0.7rem;
-            color: #6c757d;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
           }
 
           .floating-help-card.hide {

@@ -1,18 +1,23 @@
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Badge, Spinner, Alert, Button, Modal, Form, Toast, ToastContainer } from 'react-bootstrap';
-import { FaCalendarAlt, FaClock, FaUser, FaPhone, FaStethoscope, FaCheckCircle, FaExclamationTriangle, FaEdit, FaTimes, FaBell } from 'react-icons/fa';
+import { FaCalendarAlt, FaClock, FaUser, FaPhone, FaStethoscope, FaCheckCircle, FaExclamationTriangle, FaEdit, FaTimes, FaBell, FaCheck } from 'react-icons/fa';
 import { useAuth } from '../hooks/useAuth';
 import { apiService, type Appointment } from '../services/api';
 
+// Extender la interfaz Appointment para incluir información adicional
+interface ExtendedAppointment extends Appointment {
+  pendingReason?: 'doctor_reschedule' | 'patient_request';
+}
+
 const DoctorDashboard = () => {
   const { user } = useAuth();
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [appointments, setAppointments] = useState<ExtendedAppointment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
   // Estados para gestión de citas
   const [showModal, setShowModal] = useState(false);
-  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [selectedAppointment, setSelectedAppointment] = useState<ExtendedAppointment | null>(null);
   const [modalAction, setModalAction] = useState<'reschedule' | 'cancel'>('reschedule');
   const [newDateTime, setNewDateTime] = useState({ date: '', time: '' });
   const [showToast, setShowToast] = useState(false);
@@ -48,6 +53,23 @@ const DoctorDashboard = () => {
 
   const weekDays = getCurrentWeekDays();
 
+  // Función para obtener el color del día
+  const getDayHeaderStyle = (dayKey: string) => {
+    const gradients = {
+      monday: 'linear-gradient(135deg, #4a5568 0%, #2d3748 100%)',    // Gris azulado profesional
+      tuesday: 'linear-gradient(135deg, #2b6cb8 0%, #1a4480 100%)',   // Azul corporativo
+      wednesday: 'linear-gradient(135deg, #38a169 0%, #2f855a 100%)', // Verde médico suave
+      thursday: 'linear-gradient(135deg, #319795 0%, #2c7a7b 100%)',  // Teal profesional
+      friday: 'linear-gradient(135deg, #553c9a 0%, #44337a 100%)',    // Púrpura discreto
+      saturday: 'linear-gradient(135deg, #718096 0%, #4a5568 100%)',  // Gris neutro
+      sunday: 'linear-gradient(135deg, #805ad5 0%, #6b46c1 100%)'     // Púrpura suave
+    };
+    return {
+      background: gradients[dayKey as keyof typeof gradients] || gradients.monday,
+      border: 'none'
+    };
+  };
+
   // Cargar reservas al montar el componente
   useEffect(() => {
     loadAppointments();
@@ -74,14 +96,35 @@ const DoctorDashboard = () => {
   };
 
   // Funciones para gestión de citas
-  const handleReschedule = (appointment: Appointment) => {
+  const handleConfirm = (appointment: ExtendedAppointment) => {
+    try {
+      // Confirmar cita directamente
+      const updatedAppointments = appointments.map(apt => 
+        apt.id === appointment.id 
+          ? { ...apt, status: 'confirmed' as const }
+          : apt
+      );
+      setAppointments(updatedAppointments);
+      
+      // Simular notificación al paciente
+      setToastMessage(`Cita confirmada. Se ha notificado a ${appointment.patientName} por correo electrónico`);
+      setToastType('success');
+      setShowToast(true);
+    } catch {
+      setToastMessage('Error al confirmar la cita');
+      setToastType('error');
+      setShowToast(true);
+    }
+  };
+
+  const handleReschedule = (appointment: ExtendedAppointment) => {
     setSelectedAppointment(appointment);
     setModalAction('reschedule');
     setNewDateTime({ date: appointment.date, time: appointment.time });
     setShowModal(true);
   };
 
-  const handleCancel = (appointment: Appointment) => {
+  const handleCancel = (appointment: ExtendedAppointment) => {
     setSelectedAppointment(appointment);
     setModalAction('cancel');
     setShowModal(true);
@@ -106,16 +149,23 @@ const DoctorDashboard = () => {
         setShowToast(true);
         
       } else if (modalAction === 'reschedule') {
-        // Simular reagendamiento - la cita reagendada queda pendiente de confirmación
+        // Simular reagendamiento - la cita reagendada queda pendiente de confirmación del paciente
         const updatedAppointments = appointments.map(apt => 
           apt.id === selectedAppointment.id 
-            ? { ...apt, date: newDateTime.date, time: newDateTime.time, status: 'pending' as const }
+            ? { 
+                ...apt, 
+                date: newDateTime.date, 
+                time: newDateTime.time, 
+                status: 'pending' as const,
+                // Marcar que está pendiente por modificación del doctor
+                pendingReason: 'doctor_reschedule' as const
+              } as ExtendedAppointment
             : apt
         );
         setAppointments(updatedAppointments);
         
         // Simular notificación al paciente
-        setToastMessage(`Cita reagendada para ${newDateTime.date} a las ${newDateTime.time}. Se ha notificado a ${selectedAppointment.patientName} para confirmación`);
+        setToastMessage(`Cita reagendada para ${newDateTime.date} a las ${newDateTime.time}. Se ha enviado notificación a ${selectedAppointment.patientName} para que confirme el nuevo horario por correo electrónico`);
         setToastType('success');
         setShowToast(true);
       }
@@ -149,13 +199,19 @@ const DoctorDashboard = () => {
   };
 
   // Obtener badge de estado
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: string, appointment?: ExtendedAppointment) => {
     switch (status) {
       case 'confirmed':
         return <Badge bg="success" className="d-flex align-items-center gap-1">
           <FaCheckCircle size={12} /> Confirmada
         </Badge>;
       case 'pending':
+        // Distinguir entre pendiente normal y pendiente por reagendamiento del doctor
+        if (appointment?.pendingReason === 'doctor_reschedule') {
+          return <Badge bg="info" className="d-flex align-items-center gap-1">
+            <FaExclamationTriangle size={12} /> Esperando confirmación del paciente
+          </Badge>;
+        }
         return <Badge bg="warning" className="d-flex align-items-center gap-1">
           <FaExclamationTriangle size={12} /> Pendiente
         </Badge>;
@@ -229,7 +285,10 @@ const DoctorDashboard = () => {
             return (
               <Col key={day.key} lg={6} xl={4} className="mb-4">
                 <Card className="h-100 shadow-lg border-0 glass-card">
-                  <Card.Header className="bg-gradient-primary text-white text-center py-3">
+                  <Card.Header 
+                    className="text-white text-center py-3" 
+                    style={getDayHeaderStyle(day.key)}
+                  >
                     <h5 className="mb-0 fw-bold">
                       <FaCalendarAlt className="me-2" />
                       {day.name}
@@ -257,7 +316,7 @@ const DoctorDashboard = () => {
                                   {appointment.duration} min
                                 </small>
                               </div>
-                              {getStatusBadge(appointment.status)}
+                              {getStatusBadge(appointment.status, appointment)}
                             </div>
                             
                             <div className="appointment-details">
@@ -279,6 +338,18 @@ const DoctorDashboard = () => {
                                 
                                 {appointment.status !== 'cancelled' && (
                                   <div className="appointment-actions d-flex gap-2">
+                                    {/* Botón de confirmar solo para citas pendientes normales */}
+                                    {appointment.status === 'pending' && !appointment.pendingReason && (
+                                      <Button
+                                        size="sm"
+                                        variant="outline-success"
+                                        onClick={() => handleConfirm(appointment)}
+                                        title="Confirmar cita"
+                                        className="action-btn"
+                                      >
+                                        <FaCheck />
+                                      </Button>
+                                    )}
                                     <Button
                                       size="sm"
                                       variant="outline-primary"
@@ -325,7 +396,13 @@ const DoctorDashboard = () => {
                 <Row className="g-4">
                   <Col xs={12}>
                     <Card className="shadow-lg border-0 glass-card">
-                      <Card.Header className="bg-gradient-primary text-white text-center py-3">
+                      <Card.Header 
+                        className="text-white text-center py-3"
+                        style={{
+                          background: 'linear-gradient(135deg, #4a5568 0%, #2d3748 100%)',
+                          border: 'none'
+                        }}
+                      >
                         <h5 className="mb-0 fw-bold">
                           <FaCalendarAlt className="me-2" />
                           Próximas Citas
@@ -345,7 +422,7 @@ const DoctorDashboard = () => {
                                     {appointment.duration} min
                                   </small>
                                 </div>
-                                {getStatusBadge(appointment.status)}
+                                {getStatusBadge(appointment.status, appointment)}
                               </div>
                               
                               <div className="appointment-details">
@@ -367,6 +444,18 @@ const DoctorDashboard = () => {
                                   
                                   {appointment.status !== 'cancelled' && (
                                     <div className="appointment-actions d-flex gap-2">
+                                      {/* Botón de confirmar solo para citas pendientes normales */}
+                                      {appointment.status === 'pending' && !appointment.pendingReason && (
+                                        <Button
+                                          size="sm"
+                                          variant="outline-success"
+                                          onClick={() => handleConfirm(appointment)}
+                                          title="Confirmar cita"
+                                          className="action-btn"
+                                        >
+                                          <FaCheck />
+                                        </Button>
+                                      )}
                                       <Button
                                         size="sm"
                                         variant="outline-primary"
