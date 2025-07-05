@@ -7,11 +7,13 @@ import DoctorDashboard from './pages/DoctorDashboard';
 import LoginPage from './pages/LoginPage';
 import NavigationBar from './components/NavigationBar';
 import ProtectedRoute from './components/ProtectedRoute';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   return (
     <AuthProvider>
       <Router>
+        <ScrollToTop />
         <NavigationBar />
         <Routes>
           {/* Rutas públicas */}
