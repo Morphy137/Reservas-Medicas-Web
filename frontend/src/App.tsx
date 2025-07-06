@@ -1,3 +1,9 @@
+/**
+ * Componente principal de la aplicación MediReservas
+ * Configura el enrutamiento, autenticación y estructura base
+ * @version 1.0.0
+ */
+
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import HomePage from './pages/HomePage';
@@ -21,7 +27,7 @@ function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<LoginPage />} />
           
-          {/* Rutas protegidas */}
+          {/* Rutas protegidas por autenticación */}
           <Route 
             path="/doctors" 
             element={
@@ -30,6 +36,8 @@ function App() {
               </ProtectedRoute>
             } 
           />
+          
+          {/* Rutas específicas para pacientes y admin */}
           <Route 
             path="/book" 
             element={
@@ -46,6 +54,8 @@ function App() {
               </ProtectedRoute>
             } 
           />
+          
+          {/* Dashboard para médicos y admin */}
           <Route 
             path="/dashboard" 
             element={
@@ -54,6 +64,8 @@ function App() {
               </ProtectedRoute>
             } 
           />
+          
+          {/* Panel administrativo exclusivo */}
           <Route 
             path="/admin" 
             element={
@@ -63,7 +75,7 @@ function App() {
             } 
           />
           
-          {/* Ruta para páginas no encontradas */}
+          {/* Manejo de rutas no encontradas */}
           <Route 
             path="*" 
             element={

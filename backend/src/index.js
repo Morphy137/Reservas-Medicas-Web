@@ -1,35 +1,45 @@
+/**
+ * MediReservas - Servidor Backend Principal
+ * Sistema de reservas médicas con autenticación JWT y gestión de citas
+ * @version 1.0.0
+ * @author MediReservas Team
+ */
+
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
-// Importar configuración de base de datos
 const { testConnection, initializeDatabase } = require('./config/database');
-
-// Importar rutas
 const authRoutes = require('./routes/auth');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// Middlewares
+// Configuración de CORS para desarrollo
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:5174'], // Frontend React/Vite
+    origin: ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:5174'],
     credentials: true
 }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Middleware de logging básico
+// Middleware de logging para desarrollo
 app.use((req, res, next) => {
     console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
     next();
 });
 
-// Rutas principales
 app.use('/api/auth', authRoutes);
 
-// Datos de ejemplo para reservas (simulando base de datos)
+/**
+ * Datos de ejemplo para el dashboard médico
+ * TODO: Migrar a base de datos real en producción
+ * 
+ * Estructura de citas médicas con información completa para pruebas del sistema.
+ * Incluye pacientes de ejemplo distribuidos a lo largo de la semana para demostrar
+ * la funcionalidad del dashboard semanal interactivo.
+ */
 const sampleAppointments = [
     {
         id: 1,
@@ -99,13 +109,18 @@ const sampleAppointments = [
     }
 ];
 
-// Endpoint para obtener reservas del doctor autenticado
+/**
+ * Endpoint protegido para obtener las citas del médico autenticado
+ * @route GET /api/appointments
+ * @access Private (Doctor role required)
+ * @returns {Object} Lista de citas filtradas por email del doctor
+ */
 const { verifyToken } = require('./middlewares/authMiddleware');
 app.get('/api/appointments', verifyToken, (req, res) => {
     try {
         const userEmail = req.user.email;
         
-        // Filtrar reservas por doctor
+        // Filtrar citas por doctor autenticado
         const doctorAppointments = sampleAppointments.filter(
             appointment => appointment.doctorEmail === userEmail
         );
@@ -124,7 +139,11 @@ app.get('/api/appointments', verifyToken, (req, res) => {
     }
 });
 
-// Ruta de prueba
+/**
+ * Health check endpoint para monitoreo del servidor
+ * @route GET /api/health
+ * @access Public
+ */
 app.get('/api/health', (req, res) => {
     res.json({
         success: true,
@@ -133,7 +152,12 @@ app.get('/api/health', (req, res) => {
     });
 });
 
-// Ruta para obtener información de usuarios de prueba
+/**
+ * Endpoint para obtener usuarios de prueba del sistema
+ * @route GET /api/test-users  
+ * @access Public
+ * @description Devuelve lista de credenciales para testing y demostración
+ */
 app.get('/api/test-users', (req, res) => {
     res.json({
         success: true,
@@ -161,7 +185,7 @@ app.get('/api/test-users', (req, res) => {
     });
 });
 
-// Manejo de rutas no encontradas
+// Manejo global de errores y rutas no encontradas
 app.use((req, res) => {
     res.status(404).json({
         success: false,
@@ -169,7 +193,6 @@ app.use((req, res) => {
     });
 });
 
-// Manejo de errores globales
 app.use((error, req, res, next) => {
     console.error('Error global:', error);
     res.status(500).json({
@@ -178,22 +201,23 @@ app.use((error, req, res, next) => {
     });
 });
 
-// Función para iniciar el servidor
+/**
+ * Inicialización del servidor con configuración de desarrollo
+ * TODO: Habilitar conexión a BD para producción
+ */
 const startServer = async () => {
     try {
         console.log('🚀 Iniciando servidor en modo desarrollo...');
         
-        // Comentar temporalmente la conexión a BD para testing
+        // Base de datos deshabilitada temporalmente para prototipo
+        // TODO: Descomentar para producción con BD real
         // console.log('🔌 Probando conexión a la base de datos...');
         // const isConnected = await testConnection();
-        
         // if (isConnected) {
-        //     // Inicializar base de datos y tablas
         //     console.log('🔧 Inicializando base de datos...');
         //     await initializeDatabase();
         // }
         
-        // Iniciar servidor sin BD por ahora
         app.listen(PORT, () => {
             console.log('\n🚀 ===== SERVIDOR INICIADO =====');
             console.log(`📍 Puerto: http://localhost:${PORT}`);
@@ -210,7 +234,7 @@ const startServer = async () => {
     }
 };
 
-// Manejo de cierre del servidor
+// Manejo limpio del cierre del servidor
 process.on('SIGINT', () => {
     console.log('\n🛑 Cerrando servidor...');
     process.exit(0);
@@ -221,5 +245,4 @@ process.on('SIGTERM', () => {
     process.exit(0);
 });
 
-// Iniciar servidor
 startServer();

@@ -1,7 +1,12 @@
-// Servicio de API para comunicación con el backend
+/**
+ * Servicio de API para comunicación con el backend
+ * Centraliza todas las peticiones HTTP y manejo de autenticación JWT
+ * @version 1.0.0
+ */
+
 const API_BASE_URL = 'http://localhost:4000/api';
 
-// Tipos de respuesta de la API
+// Interfaces TypeScript para tipado fuerte
 export interface ApiResponse<T = unknown> {
   success: boolean;
   message: string;
@@ -47,8 +52,15 @@ export interface LoginResponse {
   user: User;
 }
 
-// Clase para manejar las peticiones a la API
+/**
+ * Clase principal para manejo de peticiones HTTP
+ * Implementa patrón Singleton para gestión centralizada de API
+ */
 class ApiService {
+  /**
+   * Configura headers HTTP con autenticación opcional
+   * @param includeAuth - Si incluir token JWT en Authorization header
+   */
   private getHeaders(includeAuth = false): HeadersInit {
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
@@ -64,6 +76,10 @@ class ApiService {
     return headers;
   }
 
+  /**
+   * Maneja respuestas HTTP y errores de forma centralizada
+   * @param response - Response object de fetch
+   */
   private async handleResponse<T>(response: Response): Promise<T> {
     const data = await response.json();
     
@@ -74,19 +90,24 @@ class ApiService {
     return data;
   }
 
-  // Verificar salud del servidor
+  // === ENDPOINTS PÚBLICOS ===
+  
   async healthCheck(): Promise<ApiResponse> {
     const response = await fetch(`${API_BASE_URL}/health`);
     return this.handleResponse<ApiResponse>(response);
   }
 
-  // Obtener usuarios de prueba
   async getTestUsers(): Promise<ApiResponse> {
     const response = await fetch(`${API_BASE_URL}/test-users`);
     return this.handleResponse<ApiResponse>(response);
   }
 
-  // Autenticación - Login
+  // === AUTENTICACIÓN ===
+  
+  /**
+   * Autentica usuario y almacena token JWT
+   * @param credentials - Email y contraseña del usuario
+   */
   async login(credentials: LoginRequest): Promise<LoginResponse> {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
       method: 'POST',
@@ -96,7 +117,7 @@ class ApiService {
     
     const data = await this.handleResponse<LoginResponse>(response);
     
-    // Guardar token en localStorage si el login es exitoso
+    // Almacenar credenciales en localStorage si login exitoso
     if (data.success && data.token) {
       localStorage.setItem('authToken', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
@@ -105,7 +126,6 @@ class ApiService {
     return data;
   }
 
-  // Autenticación - Registro
   async register(userData: RegisterRequest): Promise<ApiResponse> {
     const response = await fetch(`${API_BASE_URL}/auth/register`, {
       method: 'POST',
@@ -116,7 +136,6 @@ class ApiService {
     return this.handleResponse<ApiResponse>(response);
   }
 
-  // Verificar token
   async verifyToken(): Promise<ApiResponse<User>> {
     const response = await fetch(`${API_BASE_URL}/auth/verify`, {
       headers: this.getHeaders(true),
@@ -125,7 +144,10 @@ class ApiService {
     return this.handleResponse<ApiResponse<User>>(response);
   }
 
-  // Logout
+  /**
+   * Cierra sesión del usuario y limpia almacenamiento local
+   * Asegura limpieza incluso si el servidor falla
+   */
   async logout(): Promise<ApiResponse> {
     try {
       const response = await fetch(`${API_BASE_URL}/auth/logout`, {
@@ -134,42 +156,42 @@ class ApiService {
       });
       
       const data = await this.handleResponse<ApiResponse>(response);
-      
-      // Limpiar localStorage independientemente de la respuesta
       this.clearAuth();
-      
       return data;
     } catch (error) {
-      // Aún así limpiar localStorage en caso de error
+      // Garantizar limpieza local incluso con errores de red
       this.clearAuth();
       throw error;
     }
   }
 
-  // Limpiar datos de autenticación
+  // === UTILIDADES DE AUTENTICACIÓN ===
+  
   clearAuth(): void {
     localStorage.removeItem('authToken');
     localStorage.removeItem('user');
   }
 
-  // Obtener usuario actual del localStorage
   getCurrentUser(): User | null {
     const userStr = localStorage.getItem('user');
     return userStr ? JSON.parse(userStr) : null;
   }
 
-  // Verificar si hay un token válido
   isAuthenticated(): boolean {
     const token = localStorage.getItem('authToken');
     return !!token;
   }
 
-  // Obtener token actual
   getToken(): string | null {
     return localStorage.getItem('authToken');
   }
 
-  // Obtener reservas del doctor autenticado
+  // === ENDPOINTS PROTEGIDOS ===
+  
+  /**
+   * Obtiene citas del médico autenticado
+   * @requires Authentication JWT token
+   */
   async getAppointments(): Promise<ApiResponse<Appointment[]>> {
     const response = await fetch(`${API_BASE_URL}/appointments`, {
       headers: this.getHeaders(true),
@@ -179,6 +201,6 @@ class ApiService {
   }
 }
 
-// Exportar instancia única del servicio
+// Instancia singleton del servicio de API
 export const apiService = new ApiService();
 export default apiService;

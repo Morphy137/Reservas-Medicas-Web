@@ -1,43 +1,48 @@
+/**
+ * Estilos Globales - MediReservas
+ * Sistema de diseño unificado con tema médico profesional
+ * Incluye variables CSS, glass-morphism y gradientes corporativos
+ */
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Oswald:wght@700&display=swap');
 
+/* === VARIABLES CSS === */
 :root {
-  /* Colores principales */
-  --primary: #415a77;        /* Azul medio/acento */
-  --secondary: #778da9;      /* Azul claro/acento */
-  --light: #e0e1dd;          /* Fondo general */
-  --dark: #0d1b2a;           /* Texto principal */
-  --navbar-bg: #0d1b2a;      /* Navbar y footer */
-  --button-bg: #415a77;      /* Botón principal */
-  --button-text: #fff;       /* Texto de botón */
+  --primary: #415a77;        
+  --secondary: #778da9;      
+  --light: #e0e1dd;          
+  --dark: #0d1b2a;           
+  --navbar-bg: #0d1b2a;      
+  --button-bg: #415a77;      
+  --button-text: #fff;       
 }
 
+/* === CONFIGURACIÓN BASE === */
 body {
   font-family: 'Inter', Arial, sans-serif;
   background-color: var(--light);
   color: var(--dark);
   margin: 0;
   min-height: 100vh;
-  padding-top: 56px; /* Ajusta según la altura de tu navbar */
+  padding-top: 56px;
 }
 
-/* Oculta la barra de scroll en body y html */
+/* Scrollbar oculto para experiencia limpia */
 body, html {
-  scrollbar-width: none;        /* Firefox */
-  -ms-overflow-style: none;     /* IE y Edge */
+  scrollbar-width: none;        
+  -ms-overflow-style: none;     
 }
 body::-webkit-scrollbar, html::-webkit-scrollbar {
-  display: none;                /* Chrome, Safari, Opera, Edge Chromium */
+  display: none;                
 }
 
+/* === COMPONENTES BASE === */
 .footer-main {
   background-color: var(--navbar-bg) !important;
   color: var(--light);
   box-shadow: 0 2px 8px 0 rgba(13,27,42,0.03);
 }
 
-/* Las definiciones específicas están más abajo */
-
-/* Añadir un overlay muy sutil inspirado en salud */
 .feature-section::before {
   content: '';
   position: absolute;
@@ -50,10 +55,6 @@ body::-webkit-scrollbar, html::-webkit-scrollbar {
     radial-gradient(circle at 70% 60%, rgba(188,221,216,0.08) 0%, transparent 60%);
   pointer-events: none;
 }
-
-/* Sin efectos de onda - transición perfecta con gradientes */
-
-/* Ya definida arriba junto con el z-index y padding */
 
 .card,
 .card.h-100 {

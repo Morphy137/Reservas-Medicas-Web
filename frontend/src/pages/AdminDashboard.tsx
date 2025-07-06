@@ -1,4 +1,9 @@
-// src/pages/AdminDashboard.tsx
+/**
+ * Panel de Administración - MediReservas
+ * Dashboard completo para gestión de médicos y reservas del sistema
+ * Incluye CRUD de médicos, gestión de citas y validaciones de negocio
+ */
+
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Modal, Form, Badge, Alert, Tab, Tabs, Table, Toast, ToastContainer } from 'react-bootstrap';
 import { useAuth } from '../hooks/useAuth';
@@ -31,9 +36,16 @@ interface Appointment {
   adminNotes?: string;
 }
 
-// Función para validar cambios de estado según reglas de negocio
+/**
+ * Validador de transiciones de estado según reglas de negocio
+ * Implementa restricciones críticas del sistema de reservas médicas
+ * 
+ * Reglas implementadas:
+ * - Una cita confirmada no puede cancelarse (integridad clínica)
+ * - Una cita cancelada no puede reconfirmarse (previene manipulación)
+ * - Evita cambios redundantes de estado
+ */
 const canChangeAppointmentStatus = (currentStatus: string, newStatus: string): { allowed: boolean, reason?: string } => {
-  // Regla 1: Una vez confirmada, no se puede cancelar
   if (currentStatus === 'confirmed' && newStatus === 'cancelled') {
     return { 
       allowed: false, 
@@ -41,7 +53,6 @@ const canChangeAppointmentStatus = (currentStatus: string, newStatus: string): {
     };
   }
   
-  // Regla 2: Una vez cancelada, no se puede confirmar
   if (currentStatus === 'cancelled' && newStatus === 'confirmed') {
     return { 
       allowed: false, 
@@ -49,7 +60,6 @@ const canChangeAppointmentStatus = (currentStatus: string, newStatus: string): {
     };
   }
   
-  // Regla 3: Una vez cancelada, no se puede volver a cancelar
   if (currentStatus === 'cancelled' && newStatus === 'cancelled') {
     return { 
       allowed: false, 
@@ -57,7 +67,6 @@ const canChangeAppointmentStatus = (currentStatus: string, newStatus: string): {
     };
   }
   
-  // Regla 4: Una vez confirmada, no se puede volver a confirmar
   if (currentStatus === 'confirmed' && newStatus === 'confirmed') {
     return { 
       allowed: false, 
@@ -65,7 +74,6 @@ const canChangeAppointmentStatus = (currentStatus: string, newStatus: string): {
     };
   }
 
-  // Cambios permitidos: pending → confirmed, pending → cancelled
   return { allowed: true };
 };
 
