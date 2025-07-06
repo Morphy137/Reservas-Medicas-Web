@@ -315,7 +315,7 @@ npm test         # 🧪 Ejecutar tests (configurar)
 
 ---
 
-## 🎯 Restricciones de Negocio
+## 🎯 Restricciones
 
 ### **📋 Estados de Reservas**
 - **Pendiente** → **Confirmada** ✅
