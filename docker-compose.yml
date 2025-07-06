@@ -1,0 +1,85 @@
+# ================================================================
+# DOCKER COMPOSE PARA DESARROLLO
+# Sistema de Reservas Médicas - MediReservas
+# ================================================================
+
+version: '3.8'
+
+services:
+  # Base de datos MySQL
+  database:
+    image: mysql:8.0
+    container_name: medireservas-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: reservas_medicas
+      MYSQL_USER: medireservas
+      MYSQL_PASSWORD: medireservas123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 5
+
+  # Backend API
+  backend:
+    build: ./backend
+    container_name: medireservas-backend
+    environment:
+      - NODE_ENV=development
+      - PORT=4000
+      - DB_HOST=database
+      - DB_USER=medireservas
+      - DB_PASSWORD=medireservas123
+      - DB_NAME=reservas_medicas
+      - DB_PORT=3306
+      - JWT_SECRET=development_jwt_secret_key
+    ports:
+      - "4000:4000"
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    restart: unless-stopped
+    command: npm run dev
+
+  # Frontend React
+  frontend:
+    build: ./frontend
+    container_name: medireservas-frontend
+    environment:
+      - REACT_APP_API_URL=http://localhost:4000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    restart: unless-stopped
+    command: npm start
+
+  # Adminer para gestión de base de datos (opcional)
+  adminer:
+    image: adminer
+    container_name: medireservas-adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  default:
+    name: medireservas-network

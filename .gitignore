@@ -22,13 +22,20 @@ build/
 .firebaserc
 firebase-debug.log
 
-# MySQL
-*.sql
+# MySQL - Excluir archivos de datos pero permitir scripts de inicialización
+*.sql.backup
+*.sql.dump
+data/
+backup/
 *.sqlite
 *.db
 *.db3
 *.s3db
 *.sqlite3
+# Permitir scripts de inicialización
+!database/init.sql
+!database/schema.sql
+!scripts/*.sql
 
 # VS Code
 .vscode/

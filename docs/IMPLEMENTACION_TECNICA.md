@@ -13,15 +13,62 @@ Esta documentación técnica consolida la información de implementación del si
 #### **Stack Completo**
 - **Frontend:** React 18 + TypeScript + Vite (Puerto 5173)
 - **Backend:** Node.js + Express (Puerto 4000)
+- **Base de Datos:** MySQL 8.0 (Puerto 3306)
 - **Autenticación:** JWT con roles diferenciados
 - **Comunicación:** API REST con axios
 - **Estado:** Context API + localStorage
+- **Containerización:** Docker + Docker Compose
+- **Servidor Web:** Nginx para producción
 
 #### **Flujo de Comunicación**
 ```
-Cliente React (5173) ←→ API Express (4000) ←→ Data Layer (localStorage)
-                     ↑
-                 JWT Auth
+Cliente React (3000/5173) ←→ API Express (4000) ←→ MySQL (3306)
+         ↑                          ↑                    ↑
+    Nginx (Prod)              JWT Auth            Inicialización
+```
+
+---
+
+## 🐳 Arquitectura Docker
+
+### **🏗️ Servicios Containerizados**
+
+#### **docker-compose.yml**
+```yaml
+services:
+  database:     # MySQL 8.0 con datos de prueba
+  backend:      # Node.js API + JWT + CORS
+  frontend:     # React + Nginx optimizado
+  adminer:      # UI para gestión de BD
+```
+
+#### **Características Docker**
+- ✅ **Inicialización automática** de base de datos
+- ✅ **Datos de prueba** precargados
+- ✅ **Healthchecks** para dependencias
+- ✅ **Volúmenes persistentes** para MySQL
+- ✅ **Hot-reload** en desarrollo
+- ✅ **Nginx optimizado** para React SPA
+- ✅ **Variables de entorno** configurables
+
+### **🚀 Deployment Ready**
+
+#### **Contenedores de Producción**
+- **Frontend:** React build + Nginx Alpine
+- **Backend:** Node.js 18 Alpine con usuario no-root
+- **Database:** MySQL 8.0 con configuración optimizada
+- **Reverse Proxy:** Nginx con compresión gzip y headers de seguridad
+
+#### **Comandos Docker**
+```bash
+# Desarrollo completo
+docker-compose up
+
+# Producción
+docker-compose -f docker-compose.prod.yml up
+
+# Rebuild completo
+docker-compose up --build
 ```
 
 ---

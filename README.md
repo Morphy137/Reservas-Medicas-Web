@@ -38,16 +38,23 @@
 
 ### **Backend**
 - **Node.js** + **Express.js** - Servidor HTTP
+- **MySQL** - Base de datos relacional
 - **JWT** - Autenticación y autorización
 - **bcryptjs** - Encriptación de contraseñas
 - **CORS** - Configuración de origen cruzado
 - **Nodemon** - Desarrollo con hot-reload
 
+### **DevOps & Deployment**
+- **Docker** + **Docker Compose** - Containerización completa
+- **MySQL 8.0** - Base de datos en contenedor
+- **Nginx** - Servidor web para producción
+- **Scripts SQL** - Inicialización automática de BD
+
 ### **Desarrollo**
 - **Git & GitHub** - Control de versiones
 - **VS Code** - Entorno de desarrollo
 - **ESLint** - Linting y calidad de código
-- **PowerShell** - Terminal para Windows
+- **Environment Variables** - Configuración segura
 
 ---
 
@@ -58,11 +65,17 @@
 ├── 📄 README.md                    # Documentación principal
 ├── 📄 ESTADO_PROYECTO.md           # Estado y análisis completo
 ├── 📄 package.json                 # Configuración del workspace
+├── � docker-compose.yml           # Orquestación Docker completa
+├── �📁 database/                    # Scripts de base de datos
+│   └── 📄 init.sql                 # Inicialización automática MySQL
 ├── 📁 frontend/                    # Aplicación React (Cliente)
 │   ├── 📄 index.html               # Punto de entrada HTML
 │   ├── 📄 package.json             # Dependencias frontend
 │   ├── 📄 vite.config.ts           # Configuración Vite
-│   ├── 📁 public/                  # Recursos estáticos
+│   ├── 🐳 Dockerfile               # Container React + Nginx
+│   ├── ⚙️ nginx.conf               # Configuración servidor web
+│   ├── � .env.example             # Plantilla variables entorno
+│   ├── �📁 public/                  # Recursos estáticos
 │   │   ├── 🎨 medical-favicon.svg  # Favicon personalizado
 │   │   └── 🖼️ bg_home.jpeg         # Imagen de fondo
 │   └── 📁 src/                     # Código fuente React
@@ -91,6 +104,8 @@
 ├── 📁 backend/                     # Servidor Node.js
 │   ├── 📄 package.json             # Dependencias backend
 │   ├── 📄 PRUEBAS_BACKEND.md       # Documentación de testing
+│   ├── 🐳 Dockerfile               # Container Node.js
+│   ├── 📄 .env.example             # Plantilla variables entorno
 │   └── 📁 src/                     # Código fuente Node.js
 │       ├── 📄 index.js             # Servidor principal
 │       ├── 📁 config/              # Configuraciones
@@ -104,9 +119,11 @@
 │       └── 📁 routes/              # Rutas de API
 │           └── 🌐 auth.js
 └── 📁 docs/                        # Documentación técnica
+    ├── 📄 README.md                # Índice de documentación
+    ├── 📄 IMPLEMENTACION_TECNICA.md # Especificaciones técnicas
+    ├── 📄 REQUISITOS_ACADEMICOS.md # Cumplimiento académico
     ├── 📄 DASHBOARD_DOCTOR_COMPLETO.md
-    ├── 📄 DISEÑO_LOGIN_RENOVADO.md
-    └── 📄 CONEXION_IMPLEMENTADA.md
+    └── 📄 DISEÑO_LOGIN_RENOVADO.md
 ```
 
 ---
@@ -135,35 +152,97 @@
 ## 🚀 Instalación y Ejecución
 
 ### **📋 Requisitos Previos**
+
+#### **🐳 Opción 1: Con Docker (Recomendado)**
+- **Docker** y **Docker Compose** ✅
+- **Git** para clonar el repositorio ✅
+
+#### **🔧 Opción 2: Instalación Manual**
 - **Node.js** (versión 18 o superior) ✅
+- **MySQL 8.0** o superior ✅
 - **npm** (incluido con Node.js) ✅
 - **Git** para clonar el repositorio ✅
-- **PowerShell** o terminal compatible ✅
 
 ### **⬇️ 1. Clonar el Repositorio**
-```powershell
+```bash
 git clone https://github.com/usuario/reservas-medicas-web.git
 cd "Reservas Medicas Web"
 ```
 
-### **🎨 2. Configurar Frontend**
-```powershell
+### **🐳 2. Opción A: Con Docker (Recomendado)**
+
+#### **Inicio Rápido - Un Solo Comando**
+```bash
+# Crear archivos de configuración
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
+
+# Levantar todo el sistema
+docker-compose up
+```
+
+**� ¡Sistema completo listo en 5 minutos!**
+- ✅ Frontend: `http://localhost:3000`
+- ✅ Backend: `http://localhost:4000`  
+- ✅ Base de datos: `localhost:3306`
+- ✅ Adminer (DB UI): `http://localhost:8080`
+
+#### **Comandos Docker Útiles**
+```bash
+# Ejecutar en segundo plano
+docker-compose up -d
+
+# Ver logs en tiempo real
+docker-compose logs -f
+
+# Parar todos los servicios
+docker-compose down
+
+# Reconstruir contenedores
+docker-compose up --build
+```
+
+### **🔧 2. Opción B: Instalación Manual**
+
+#### **Configurar Variables de Entorno**
+```bash
+# Backend
+cp backend/.env.example backend/.env
+# Editar backend/.env con tus credenciales MySQL
+
+# Frontend  
+cp frontend/.env.example frontend/.env
+# Verificar URL del backend
+```
+
+#### **Configurar Base de Datos**
+```sql
+-- Crear base de datos
+CREATE DATABASE reservas_medicas;
+
+-- Ejecutar script de inicialización
+mysql -u root -p reservas_medicas < database/init.sql
+```
+
+#### **Instalar y Ejecutar**
+#### **Instalar y Ejecutar**
+```bash
+# Frontend
 cd frontend
 npm install
 npm run dev
-```
-**✅ Frontend corriendo en:** `http://localhost:5173`
 
-### **⚙️ 3. Configurar Backend**
-```powershell
-# En una nueva terminal
-cd backend
+# Backend (nueva terminal)
+cd backend  
 npm install
 npm run dev
 ```
-**✅ Backend corriendo en:** `http://localhost:4000`
 
-### **🎯 4. Acceder al Sistema**
+**✅ URLs del Sistema:**
+- Frontend: `http://localhost:5173` (Vite dev)
+- Backend: `http://localhost:4000` (Express)
+
+### **🎯 3. Acceder al Sistema**
 1. Abre tu navegador en `http://localhost:5173`
 2. Usa las credenciales de prueba para hacer login
 3. Explora las diferentes funcionalidades según el rol
