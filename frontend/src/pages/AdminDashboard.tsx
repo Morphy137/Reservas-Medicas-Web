@@ -31,6 +31,44 @@ interface Appointment {
   adminNotes?: string;
 }
 
+// Función para validar cambios de estado según reglas de negocio
+const canChangeAppointmentStatus = (currentStatus: string, newStatus: string): { allowed: boolean, reason?: string } => {
+  // Regla 1: Una vez confirmada, no se puede cancelar
+  if (currentStatus === 'confirmed' && newStatus === 'cancelled') {
+    return { 
+      allowed: false, 
+      reason: 'Una cita confirmada no puede ser cancelada. Esta restricción mantiene un registro claro del historial clínico.' 
+    };
+  }
+  
+  // Regla 2: Una vez cancelada, no se puede confirmar
+  if (currentStatus === 'cancelled' && newStatus === 'confirmed') {
+    return { 
+      allowed: false, 
+      reason: 'Una cita cancelada no puede ser reconfirmada. Debe crear una nueva reserva.' 
+    };
+  }
+  
+  // Regla 3: Una vez cancelada, no se puede volver a cancelar
+  if (currentStatus === 'cancelled' && newStatus === 'cancelled') {
+    return { 
+      allowed: false, 
+      reason: 'Esta cita ya está cancelada.' 
+    };
+  }
+  
+  // Regla 4: Una vez confirmada, no se puede volver a confirmar
+  if (currentStatus === 'confirmed' && newStatus === 'confirmed') {
+    return { 
+      allowed: false, 
+      reason: 'Esta cita ya está confirmada.' 
+    };
+  }
+
+  // Cambios permitidos: pending → confirmed, pending → cancelled
+  return { allowed: true };
+};
+
 const AdminDashboard = () => {
   const { user } = useAuth();
   const [doctors, setDoctors] = useState<Doctor[]>([]);
@@ -312,6 +350,12 @@ const AdminDashboard = () => {
     if (!selectedAppointment) return;
 
     try {
+      const statusValidation = canChangeAppointmentStatus(selectedAppointment.status, appointmentFormData.status);
+      if (!statusValidation.allowed) {
+        showNotification(statusValidation.reason || 'Error desconocido', 'error');
+        return;
+      }
+
       const updatedAppointments = appointments.map(apt => 
         apt.id === selectedAppointment.id 
           ? {
@@ -951,12 +995,46 @@ const AdminDashboard = () => {
                     <Form.Label>Estado</Form.Label>
                     <Form.Select
                       value={appointmentFormData.status}
-                      onChange={(e) => setAppointmentFormData({ ...appointmentFormData, status: e.target.value as 'pending' | 'confirmed' | 'cancelled' })}
+                      onChange={(e) => {
+                        const newStatus = e.target.value as 'pending' | 'confirmed' | 'cancelled';
+                        const validation = canChangeAppointmentStatus(selectedAppointment?.status || 'pending', newStatus);
+                        if (validation.allowed) {
+                          setAppointmentFormData({ ...appointmentFormData, status: newStatus });
+                        } else {
+                          showNotification(validation.reason || 'Cambio de estado no permitido', 'error');
+                        }
+                      }}
                     >
-                      <option value="pending">Pendiente</option>
-                      <option value="confirmed">Confirmada</option>
-                      <option value="cancelled">Cancelada</option>
+                      <option 
+                        value="pending" 
+                        disabled={!canChangeAppointmentStatus(selectedAppointment?.status || 'pending', 'pending').allowed}
+                      >
+                        Pendiente{!canChangeAppointmentStatus(selectedAppointment?.status || 'pending', 'pending').allowed ? ' (No disponible)' : ''}
+                      </option>
+                      <option 
+                        value="confirmed" 
+                        disabled={!canChangeAppointmentStatus(selectedAppointment?.status || 'pending', 'confirmed').allowed}
+                      >
+                        Confirmada{!canChangeAppointmentStatus(selectedAppointment?.status || 'pending', 'confirmed').allowed ? ' (No disponible)' : ''}
+                      </option>
+                      <option 
+                        value="cancelled" 
+                        disabled={!canChangeAppointmentStatus(selectedAppointment?.status || 'pending', 'cancelled').allowed}
+                      >
+                        Cancelada{!canChangeAppointmentStatus(selectedAppointment?.status || 'pending', 'cancelled').allowed ? ' (No disponible)' : ''}
+                      </option>
                     </Form.Select>
+                    {selectedAppointment && (
+                      <Form.Text className="text-muted">
+                        Estado actual: <strong>{getStatusText(selectedAppointment.status)}</strong>
+                        {selectedAppointment.status === 'confirmed' && (
+                          <><br /><small className="text-warning">⚠️ Las citas confirmadas no pueden ser canceladas</small></>
+                        )}
+                        {selectedAppointment.status === 'cancelled' && (
+                          <><br /><small className="text-info">ℹ️ Las citas canceladas no pueden ser reconfirmadas</small></>
+                        )}
+                      </Form.Text>
+                    )}
                   </Form.Group>
                 </Col>
               </Row>

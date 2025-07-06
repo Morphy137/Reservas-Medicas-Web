@@ -18,6 +18,50 @@ interface PatientAppointment {
   createdAt: string;
 }
 
+// Función para validar si un paciente puede cancelar una cita
+const canPatientCancelAppointment = (status: string): { allowed: boolean, reason?: string } => {
+  // Regla: Una vez confirmada, el paciente no puede cancelarla
+  if (status === 'confirmed') {
+    return { 
+      allowed: false, 
+      reason: 'No puedes cancelar una cita ya confirmada. Si no puedes asistir, contacta directamente al médico o centro médico.' 
+    };
+  }
+  
+  // Regla: Una cita ya cancelada no se puede volver a cancelar
+  if (status === 'cancelled') {
+    return { 
+      allowed: false, 
+      reason: 'Esta cita ya está cancelada.' 
+    };
+  }
+
+  // Solo se puede cancelar si está pendiente
+  return { allowed: true };
+};
+
+// Función para validar si un paciente puede reagendar una cita
+const canPatientRescheduleAppointment = (status: string): { allowed: boolean, reason?: string } => {
+  // Regla: Una vez confirmada, el paciente no puede reagendarla
+  if (status === 'confirmed') {
+    return { 
+      allowed: false, 
+      reason: 'No puedes reagendar una cita ya confirmada. Si necesitas cambiar la fecha, contacta directamente al médico o centro médico.' 
+    };
+  }
+  
+  // Regla: Una cita cancelada no se puede reagendar
+  if (status === 'cancelled') {
+    return { 
+      allowed: false, 
+      reason: 'Una cita cancelada no puede ser reagendada. Debes crear una nueva reserva.' 
+    };
+  }
+
+  // Solo se puede reagendar si está pendiente
+  return { allowed: true };
+};
+
 const BookingPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -89,6 +133,11 @@ const BookingPage = () => {
 
   // Manejar cancelación
   const handleCancel = (appointment: PatientAppointment) => {
+    const validation = canPatientCancelAppointment(appointment.status);
+    if (!validation.allowed) {
+      showNotification(validation.reason || 'No se puede cancelar esta cita', 'error');
+      return;
+    }
     setSelectedAppointment(appointment);
     setModalAction('cancel');
     setShowModal(true);
@@ -96,6 +145,11 @@ const BookingPage = () => {
 
   // Manejar reagendamiento
   const handleReschedule = (appointment: PatientAppointment) => {
+    const validation = canPatientRescheduleAppointment(appointment.status);
+    if (!validation.allowed) {
+      showNotification(validation.reason || 'No se puede reagendar esta cita', 'error');
+      return;
+    }
     setSelectedAppointment(appointment);
     setModalAction('reschedule');
     setNewDateTime({ date: appointment.date, time: appointment.time });
@@ -109,6 +163,13 @@ const BookingPage = () => {
     const storedAppointments = JSON.parse(localStorage.getItem('patientAppointments') || '[]');
     
     if (modalAction === 'cancel') {
+      // Validar antes de cancelar
+      const validation = canPatientCancelAppointment(selectedAppointment.status);
+      if (!validation.allowed) {
+        showNotification(validation.reason || 'No se puede cancelar esta cita', 'error');
+        return;
+      }
+      
       // Cancelar cita
       const updatedAppointments = storedAppointments.map((apt: PatientAppointment) => 
         apt.id === selectedAppointment.id 
@@ -119,6 +180,13 @@ const BookingPage = () => {
       showNotification('Cita cancelada exitosamente', 'info');
       
     } else if (modalAction === 'reschedule') {
+      // Validar antes de reagendar
+      const validation = canPatientRescheduleAppointment(selectedAppointment.status);
+      if (!validation.allowed) {
+        showNotification(validation.reason || 'No se puede reagendar esta cita', 'error');
+        return;
+      }
+      
       // Verificar si ya hay una cita en el nuevo horario (excluyendo la cita actual)
       const conflictingAppointment = storedAppointments.find((apt: PatientAppointment) => 
         apt.patientEmail === user?.email && 
@@ -261,6 +329,12 @@ const BookingPage = () => {
                                 variant="outline-primary"
                                 onClick={() => handleReschedule(appointment)}
                                 className="flex-fill"
+                                disabled={!canPatientRescheduleAppointment(appointment.status).allowed}
+                                title={
+                                  !canPatientRescheduleAppointment(appointment.status).allowed 
+                                    ? canPatientRescheduleAppointment(appointment.status).reason 
+                                    : 'Reagendar cita'
+                                }
                               >
                                 <FaEdit className="me-1" />
                                 Reagendar
@@ -270,11 +344,27 @@ const BookingPage = () => {
                                 variant="outline-danger"
                                 onClick={() => handleCancel(appointment)}
                                 className="flex-fill"
+                                disabled={!canPatientCancelAppointment(appointment.status).allowed}
+                                title={
+                                  !canPatientCancelAppointment(appointment.status).allowed 
+                                    ? canPatientCancelAppointment(appointment.status).reason 
+                                    : 'Cancelar cita'
+                                }
                               >
                                 <FaTimes className="me-1" />
                                 Cancelar
                               </Button>
                             </div>
+                          )}
+                          {appointment.status === 'confirmed' && (
+                            <Alert variant="info" className="mt-2 mb-0 small">
+                              <strong>ℹ️ Cita confirmada:</strong> Para modificaciones, contacta directamente al centro médico
+                            </Alert>
+                          )}
+                          {appointment.status === 'cancelled' && (
+                            <Alert variant="warning" className="mt-2 mb-0 small">
+                              <strong>⚠️ Cita cancelada:</strong> Para una nueva cita, ve a la sección de médicos
+                            </Alert>
                           )}
                         </Card.Body>
                       </Card>

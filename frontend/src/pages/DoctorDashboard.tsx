@@ -9,6 +9,56 @@ interface ExtendedAppointment extends Appointment {
   pendingReason?: 'doctor_reschedule' | 'patient_request';
 }
 
+// Función para validar si un doctor puede cancelar una cita
+const canDoctorCancelAppointment = (status: string): { allowed: boolean, reason?: string } => {
+  // Regla: Una cita ya cancelada no se puede volver a cancelar
+  if (status === 'cancelled') {
+    return { 
+      allowed: false, 
+      reason: 'Esta cita ya está cancelada.' 
+    };
+  }
+
+  // Los doctores pueden cancelar citas pendientes y confirmadas
+  return { allowed: true };
+};
+
+// Función para validar si un doctor puede confirmar una cita
+const canDoctorConfirmAppointment = (status: string): { allowed: boolean, reason?: string } => {
+  // Regla: Una cita ya confirmada no se puede volver a confirmar
+  if (status === 'confirmed') {
+    return { 
+      allowed: false, 
+      reason: 'Esta cita ya está confirmada.' 
+    };
+  }
+  
+  // Regla: Una cita cancelada no se puede confirmar
+  if (status === 'cancelled') {
+    return { 
+      allowed: false, 
+      reason: 'Una cita cancelada no puede ser confirmada. El paciente debe crear una nueva reserva.' 
+    };
+  }
+
+  // Solo se puede confirmar si está pendiente
+  return { allowed: true };
+};
+
+// Función para validar si un doctor puede reagendar una cita
+const canDoctorRescheduleAppointment = (status: string): { allowed: boolean, reason?: string } => {
+  // Regla: Una cita cancelada no se puede reagendar
+  if (status === 'cancelled') {
+    return { 
+      allowed: false, 
+      reason: 'Una cita cancelada no puede ser reagendada. El paciente debe crear una nueva reserva.' 
+    };
+  }
+
+  // Los doctores pueden reagendar citas pendientes y confirmadas
+  return { allowed: true };
+};
+
 const DoctorDashboard = () => {
   const { user } = useAuth();
   const [appointments, setAppointments] = useState<ExtendedAppointment[]>([]);
@@ -97,6 +147,14 @@ const DoctorDashboard = () => {
 
   // Funciones para gestión de citas
   const handleConfirm = (appointment: ExtendedAppointment) => {
+    const validation = canDoctorConfirmAppointment(appointment.status);
+    if (!validation.allowed) {
+      setToastMessage(validation.reason || 'No se puede confirmar esta cita');
+      setToastType('error');
+      setShowToast(true);
+      return;
+    }
+    
     try {
       // Confirmar cita directamente
       const updatedAppointments = appointments.map(apt => 
@@ -118,6 +176,14 @@ const DoctorDashboard = () => {
   };
 
   const handleReschedule = (appointment: ExtendedAppointment) => {
+    const validation = canDoctorRescheduleAppointment(appointment.status);
+    if (!validation.allowed) {
+      setToastMessage(validation.reason || 'No se puede reagendar esta cita');
+      setToastType('error');
+      setShowToast(true);
+      return;
+    }
+    
     setSelectedAppointment(appointment);
     setModalAction('reschedule');
     setNewDateTime({ date: appointment.date, time: appointment.time });
@@ -125,6 +191,14 @@ const DoctorDashboard = () => {
   };
 
   const handleCancel = (appointment: ExtendedAppointment) => {
+    const validation = canDoctorCancelAppointment(appointment.status);
+    if (!validation.allowed) {
+      setToastMessage(validation.reason || 'No se puede cancelar esta cita');
+      setToastType('error');
+      setShowToast(true);
+      return;
+    }
+    
     setSelectedAppointment(appointment);
     setModalAction('cancel');
     setShowModal(true);
@@ -346,6 +420,7 @@ const DoctorDashboard = () => {
                                         onClick={() => handleConfirm(appointment)}
                                         title="Confirmar cita"
                                         className="action-btn"
+                                        disabled={!canDoctorConfirmAppointment(appointment.status).allowed}
                                       >
                                         <FaCheck />
                                       </Button>
@@ -354,8 +429,13 @@ const DoctorDashboard = () => {
                                       size="sm"
                                       variant="outline-primary"
                                       onClick={() => handleReschedule(appointment)}
-                                      title="Reagendar"
+                                      title={
+                                        canDoctorRescheduleAppointment(appointment.status).allowed 
+                                          ? "Reagendar" 
+                                          : canDoctorRescheduleAppointment(appointment.status).reason
+                                      }
                                       className="action-btn"
+                                      disabled={!canDoctorRescheduleAppointment(appointment.status).allowed}
                                     >
                                       <FaEdit />
                                     </Button>
@@ -363,8 +443,13 @@ const DoctorDashboard = () => {
                                       size="sm"
                                       variant="outline-danger"
                                       onClick={() => handleCancel(appointment)}
-                                      title="Cancelar"
+                                      title={
+                                        canDoctorCancelAppointment(appointment.status).allowed 
+                                          ? "Cancelar" 
+                                          : canDoctorCancelAppointment(appointment.status).reason
+                                      }
                                       className="action-btn"
+                                      disabled={!canDoctorCancelAppointment(appointment.status).allowed}
                                     >
                                       <FaTimes />
                                     </Button>
@@ -452,6 +537,7 @@ const DoctorDashboard = () => {
                                           onClick={() => handleConfirm(appointment)}
                                           title="Confirmar cita"
                                           className="action-btn"
+                                          disabled={!canDoctorConfirmAppointment(appointment.status).allowed}
                                         >
                                           <FaCheck />
                                         </Button>
@@ -460,8 +546,13 @@ const DoctorDashboard = () => {
                                         size="sm"
                                         variant="outline-primary"
                                         onClick={() => handleReschedule(appointment)}
-                                        title="Reagendar"
+                                        title={
+                                          canDoctorRescheduleAppointment(appointment.status).allowed 
+                                            ? "Reagendar" 
+                                            : canDoctorRescheduleAppointment(appointment.status).reason
+                                        }
                                         className="action-btn"
+                                        disabled={!canDoctorRescheduleAppointment(appointment.status).allowed}
                                       >
                                         <FaEdit />
                                       </Button>
@@ -469,8 +560,13 @@ const DoctorDashboard = () => {
                                         size="sm"
                                         variant="outline-danger"
                                         onClick={() => handleCancel(appointment)}
-                                        title="Cancelar"
+                                        title={
+                                          canDoctorCancelAppointment(appointment.status).allowed 
+                                            ? "Cancelar" 
+                                            : canDoctorCancelAppointment(appointment.status).reason
+                                        }
                                         className="action-btn"
+                                        disabled={!canDoctorCancelAppointment(appointment.status).allowed}
                                       >
                                         <FaTimes />
                                       </Button>

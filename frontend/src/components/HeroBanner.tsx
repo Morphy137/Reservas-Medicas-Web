@@ -1,12 +1,19 @@
 // src/components/HeroBanner.tsx
 import { Container, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
 const HeroBanner = () => {
+  const navigate = useNavigate();
+  
   const handleScroll = () => {
     const nextSection = document.getElementById('feature-section');
     if (nextSection) {
       nextSection.scrollIntoView({ behavior: 'smooth' });
     }
+  };
+
+  const handleViewDoctors = () => {
+    navigate('/doctors');
   };
 
   return (
@@ -18,7 +25,7 @@ const HeroBanner = () => {
         <p className="lead" style={{ maxWidth: '600px', margin: '1.5rem auto' }}>
           Conecta con profesionales de la salud de manera rápida, segura y confiable.
         </p>
-        <Button className="btn" as="a" href="/doctors" size="lg">
+        <Button className="btn" onClick={handleViewDoctors} size="lg">
           Ver Médicos Disponibles
         </Button>
       </Container>
