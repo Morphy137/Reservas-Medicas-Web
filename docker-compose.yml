@@ -3,8 +3,6 @@
 # Sistema de Reservas Médicas - MediReservas
 # ================================================================
 
-version: '3.8'
-
 services:
   # Base de datos MySQL
   database:
@@ -52,7 +50,9 @@ services:
 
   # Frontend React
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
     container_name: medireservas-frontend
     environment:
       - REACT_APP_API_URL=http://localhost:4000
@@ -64,7 +64,6 @@ services:
       - ./frontend:/app
       - /app/node_modules
     restart: unless-stopped
-    command: npm start
 
   # Adminer para gestión de base de datos (opcional)
   adminer:
