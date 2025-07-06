@@ -14,7 +14,7 @@ const TestimonialSection = () => (
         {testimonials.map((t, i) => (
           <Carousel.Item key={i}>
             <blockquote className="text-center">
-              <p className="mb-4">“{t.text}”</p>
+              <p className="mb-4">"{t.text}"</p>
               <footer>— {t.name}</footer>
             </blockquote>
           </Carousel.Item>

@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Modal, Form, Badge, Alert, Tab, Tabs, Table, Toast, ToastContainer } from 'react-bootstrap';
 import { useAuth } from '../hooks/useAuth';
-import { FaUserMd, FaPlus, FaEdit, FaTrash, FaSave, FaTimes } from 'react-icons/fa';
+import { FaUserMd, FaPlus, FaEdit, FaTrash, FaSave, FaTimes, FaCalendarCheck, FaEye, FaEnvelope } from 'react-icons/fa';
 
 interface Doctor {
   id: number;
@@ -17,17 +17,38 @@ interface Doctor {
   createdAt: string;
 }
 
+interface Appointment {
+  id: number;
+  doctorName: string;
+  doctorSpecialty: string;
+  patientName: string;
+  patientEmail: string;
+  date: string;
+  time: string;
+  status: 'pending' | 'confirmed' | 'cancelled';
+  type: string;
+  createdAt: string;
+  adminNotes?: string;
+}
+
 const AdminDashboard = () => {
   const { user } = useAuth();
   const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [showAppointmentModal, setShowAppointmentModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDeleteAppointmentModal, setShowDeleteAppointmentModal] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [doctorToDelete, setDoctorToDelete] = useState<Doctor | null>(null);
+  const [appointmentToDelete, setAppointmentToDelete] = useState<Appointment | null>(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [toastType, setToastType] = useState<'success' | 'error'>('success');
 
-  // Estados del formulario
+  // Estados del formulario de médicos
   const [formData, setFormData] = useState({
     name: '',
     specialty: '',
@@ -37,6 +58,14 @@ const AdminDashboard = () => {
     availableDays: [] as string[],
     timeSlots: [] as string[],
     isActive: true
+  });
+
+  // Estados del formulario de citas
+  const [appointmentFormData, setAppointmentFormData] = useState({
+    status: 'pending' as 'pending' | 'confirmed' | 'cancelled',
+    date: '',
+    time: '',
+    adminNotes: ''
   });
 
   // Especialidades predefinidas
@@ -66,6 +95,7 @@ const AdminDashboard = () => {
   // Cargar médicos al inicializar
   useEffect(() => {
     loadDoctors();
+    loadAppointments();
   }, []);
 
   const loadDoctors = () => {
@@ -78,6 +108,16 @@ const AdminDashboard = () => {
     }
   };
 
+  const loadAppointments = () => {
+    try {
+      const storedAppointments = JSON.parse(localStorage.getItem('patientAppointments') || '[]');
+      setAppointments(storedAppointments);
+    } catch (error) {
+      console.error('Error loading appointments:', error);
+      setAppointments([]);
+    }
+  };
+
   const saveDoctors = (updatedDoctors: Doctor[]) => {
     try {
       localStorage.setItem('adminDoctors', JSON.stringify(updatedDoctors));
@@ -85,6 +125,16 @@ const AdminDashboard = () => {
     } catch (error) {
       console.error('Error saving doctors:', error);
       showNotification('Error al guardar los cambios', 'error');
+    }
+  };
+
+  const saveAppointments = (updatedAppointments: Appointment[]) => {
+    try {
+      localStorage.setItem('patientAppointments', JSON.stringify(updatedAppointments));
+      setAppointments(updatedAppointments);
+    } catch (error) {
+      console.error('Error saving appointments:', error);
+      showNotification('Error al guardar los cambios de la cita', 'error');
     }
   };
 
@@ -128,11 +178,26 @@ const AdminDashboard = () => {
   };
 
   const handleDeleteDoctor = (doctorId: number) => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar este médico?')) {
-      const updatedDoctors = doctors.filter(doctor => doctor.id !== doctorId);
+    const doctor = doctors.find(d => d.id === doctorId);
+    if (doctor) {
+      setDoctorToDelete(doctor);
+      setShowDeleteModal(true);
+    }
+  };
+
+  const confirmDeleteDoctor = () => {
+    if (doctorToDelete) {
+      const updatedDoctors = doctors.filter(doctor => doctor.id !== doctorToDelete.id);
       saveDoctors(updatedDoctors);
       showNotification('Médico eliminado correctamente', 'success');
+      setShowDeleteModal(false);
+      setDoctorToDelete(null);
     }
+  };
+
+  const cancelDeleteDoctor = () => {
+    setShowDeleteModal(false);
+    setDoctorToDelete(null);
   };
 
   const handleSubmit = (isEdit = false) => {
@@ -230,6 +295,92 @@ const AdminDashboard = () => {
     const color = colors[Math.floor(Math.random() * colors.length)];
     
     return `https://placehold.co/300x250/${color}/FFFFFF?text=${encodeURIComponent(icon + '+' + specialty)}`;
+  };
+
+  const handleEditAppointment = (appointment: Appointment) => {
+    setSelectedAppointment(appointment);
+    setAppointmentFormData({
+      status: appointment.status,
+      date: appointment.date,
+      time: appointment.time,
+      adminNotes: appointment.adminNotes || ''
+    });
+    setShowAppointmentModal(true);
+  };
+
+  const handleUpdateAppointment = () => {
+    if (!selectedAppointment) return;
+
+    try {
+      const updatedAppointments = appointments.map(apt => 
+        apt.id === selectedAppointment.id 
+          ? {
+              ...apt,
+              status: appointmentFormData.status,
+              date: appointmentFormData.date,
+              time: appointmentFormData.time,
+              adminNotes: appointmentFormData.adminNotes
+            }
+          : apt
+      );
+
+      saveAppointments(updatedAppointments);
+
+      // Simular notificación al paciente y doctor
+      const statusMessages = {
+        confirmed: 'confirmada',
+        cancelled: 'cancelada',
+        pending: 'marcada como pendiente'
+      };
+
+      const statusMessage = statusMessages[appointmentFormData.status];
+      showNotification(
+        `Cita ${statusMessage} correctamente. Se ha notificado al paciente y al médico.`,
+        'success'
+      );
+
+      setShowAppointmentModal(false);
+      setSelectedAppointment(null);
+    } catch (error) {
+      console.error('Error updating appointment:', error);
+      showNotification('Error al actualizar la cita', 'error');
+    }
+  };
+
+  const handleDeleteAppointment = (appointmentId: number) => {
+    const appointment = appointments.find(apt => apt.id === appointmentId);
+    if (appointment) {
+      setAppointmentToDelete(appointment);
+      setShowDeleteAppointmentModal(true);
+    }
+  };
+
+  const confirmDeleteAppointment = () => {
+    if (appointmentToDelete) {
+      const updatedAppointments = appointments.filter(apt => apt.id !== appointmentToDelete.id);
+      saveAppointments(updatedAppointments);
+      showNotification('Cita eliminada correctamente. Se ha notificado al paciente y al médico.', 'success');
+      setShowDeleteAppointmentModal(false);
+      setAppointmentToDelete(null);
+    }
+  };
+
+  const getStatusBadgeVariant = (status: string) => {
+    switch (status) {
+      case 'confirmed': return 'success';
+      case 'cancelled': return 'danger';
+      case 'pending': return 'warning';
+      default: return 'secondary';
+    }
+  };
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'confirmed': return 'Confirmada';
+      case 'cancelled': return 'Cancelada';
+      case 'pending': return 'Pendiente';
+      default: return 'Desconocido';
+    }
   };
 
   if (!user || user.role !== 'admin') {
@@ -345,6 +496,111 @@ const AdminDashboard = () => {
                                 onClick={() => handleDeleteDoctor(doctor.id)}
                               >
                                 <FaTrash />
+                              </Button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                )}
+              </Card.Body>
+            </Card>
+          </Tab>
+          
+          <Tab eventKey="appointments" title={<><FaCalendarCheck className="me-2" />Gestión de Reservas</>}>
+            <Card className="shadow-sm border-0">
+              <Card.Header className="bg-light d-flex justify-content-between align-items-center">
+                <h5 className="mb-0">
+                  <FaCalendarCheck className="me-2" />
+                  Reservas del Sistema ({appointments.length})
+                </h5>
+                <Button
+                  variant="info"
+                  onClick={loadAppointments}
+                  className="d-flex align-items-center"
+                >
+                  <FaEye className="me-2" />Actualizar
+                </Button>
+              </Card.Header>
+              <Card.Body className="p-0">
+                {appointments.length === 0 ? (
+                  <div className="text-center py-5">
+                    <FaCalendarCheck className="display-1 text-muted mb-3" />
+                    <h4 className="text-muted">No hay reservas en el sistema</h4>
+                    <p className="text-muted">Las reservas aparecerán aquí cuando los pacientes hagan citas</p>
+                  </div>
+                ) : (
+                  <Table responsive hover>
+                    <thead className="bg-light">
+                      <tr>
+                        <th>Paciente</th>
+                        <th>Médico</th>
+                        <th>Fecha y Hora</th>
+                        <th>Estado</th>
+                        <th>Tipo</th>
+                        <th>Creada</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {appointments.map((appointment) => (
+                        <tr key={appointment.id}>
+                          <td>
+                            <div>
+                              <h6 className="mb-0">{appointment.patientName}</h6>
+                              <small className="text-muted">{appointment.patientEmail}</small>
+                            </div>
+                          </td>
+                          <td>
+                            <div>
+                              <h6 className="mb-0">{appointment.doctorName}</h6>
+                              <small className="text-muted">{appointment.doctorSpecialty}</small>
+                            </div>
+                          </td>
+                          <td>
+                            <div>
+                              <strong>{new Date(appointment.date).toLocaleDateString('es-ES')}</strong>
+                              <br />
+                              <span className="text-muted">{appointment.time}</span>
+                            </div>
+                          </td>
+                          <td>
+                            <Badge bg={getStatusBadgeVariant(appointment.status)}>
+                              {getStatusText(appointment.status)}
+                            </Badge>
+                          </td>
+                          <td>{appointment.type}</td>
+                          <td>
+                            <small className="text-muted">
+                              {new Date(appointment.createdAt).toLocaleDateString('es-ES')}
+                            </small>
+                          </td>
+                          <td>
+                            <div className="d-flex gap-2">
+                              <Button
+                                variant="outline-primary"
+                                size="sm"
+                                onClick={() => handleEditAppointment(appointment)}
+                                title="Editar reserva"
+                              >
+                                <FaEdit />
+                              </Button>
+                              <Button
+                                variant="outline-danger"
+                                size="sm"
+                                onClick={() => handleDeleteAppointment(appointment.id)}
+                                title="Eliminar reserva"
+                              >
+                                <FaTrash />
+                              </Button>
+                              <Button
+                                variant="outline-info"
+                                size="sm"
+                                title="Notificar cambios"
+                                onClick={() => showNotification('Notificación enviada al paciente y médico', 'success')}
+                              >
+                                <FaEnvelope />
                               </Button>
                             </div>
                           </td>
@@ -610,6 +866,211 @@ const AdminDashboard = () => {
             </Button>
             <Button variant="primary" onClick={() => handleSubmit(true)}>
               <FaSave className="me-2" />Actualizar Médico
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+        {/* Modal para Gestión de Citas Médicas */}
+        <Modal show={showAppointmentModal} onHide={() => setShowAppointmentModal(false)} size="lg">
+          <Modal.Header closeButton>
+            <Modal.Title>
+              <FaCalendarCheck className="me-2" />Gestión de Citas Médicas
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Row>
+                <Col md={6}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Nombre del Paciente *</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={selectedAppointment?.patientName}
+                      readOnly
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Email del Paciente *</Form.Label>
+                    <Form.Control
+                      type="email"
+                      value={selectedAppointment?.patientEmail}
+                      readOnly
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Row>
+                <Col md={6}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Médico Asignado</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={selectedAppointment?.doctorName}
+                      readOnly
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Especialidad</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={selectedAppointment?.doctorSpecialty}
+                      readOnly
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Row>
+                <Col md={4}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Fecha *</Form.Label>
+                    <Form.Control
+                      type="date"
+                      value={appointmentFormData.date}
+                      onChange={(e) => setAppointmentFormData({ ...appointmentFormData, date: e.target.value })}
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={4}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Hora *</Form.Label>
+                    <Form.Control
+                      type="time"
+                      value={appointmentFormData.time}
+                      onChange={(e) => setAppointmentFormData({ ...appointmentFormData, time: e.target.value })}
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={4}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Estado</Form.Label>
+                    <Form.Select
+                      value={appointmentFormData.status}
+                      onChange={(e) => setAppointmentFormData({ ...appointmentFormData, status: e.target.value as 'pending' | 'confirmed' | 'cancelled' })}
+                    >
+                      <option value="pending">Pendiente</option>
+                      <option value="confirmed">Confirmada</option>
+                      <option value="cancelled">Cancelada</option>
+                    </Form.Select>
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Form.Group className="mb-3">
+                <Form.Label>Notas del Administrador</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  value={appointmentFormData.adminNotes}
+                  onChange={(e) => setAppointmentFormData({ ...appointmentFormData, adminNotes: e.target.value })}
+                  placeholder="Notas adicionales sobre la cita"
+                />
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowAppointmentModal(false)}>
+              <FaTimes className="me-2" />Cancelar
+            </Button>
+            <Button variant="primary" onClick={handleUpdateAppointment}>
+              <FaSave className="me-2" />Guardar Cambios
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+        {/* Modal de Confirmación de Eliminación */}
+        <Modal show={showDeleteModal} onHide={cancelDeleteDoctor} centered>
+          <Modal.Header closeButton className="bg-danger text-white">
+            <Modal.Title>
+              <FaTrash className="me-2" />Confirmar Eliminación
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="text-center">
+              <div className="mb-3">
+                <FaTrash className="display-4 text-danger" />
+              </div>
+              <h5 className="mb-3">¿Estás seguro de que quieres eliminar este médico?</h5>
+              {doctorToDelete && (
+                <div className="alert alert-warning">
+                  <h6 className="mb-2">
+                    <FaUserMd className="me-2" />
+                    {doctorToDelete.name}
+                  </h6>
+                  <p className="mb-0">
+                    <strong>Especialidad:</strong> {doctorToDelete.specialty}
+                  </p>
+                  <p className="mb-0">
+                    <strong>Experiencia:</strong> {doctorToDelete.experience}
+                  </p>
+                </div>
+              )}
+              <p className="text-muted">
+                Esta acción no se puede deshacer. Toda la información del médico será eliminada permanentemente.
+              </p>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={cancelDeleteDoctor}>
+              <FaTimes className="me-2" />Cancelar
+            </Button>
+            <Button variant="danger" onClick={confirmDeleteDoctor}>
+              <FaTrash className="me-2" />Eliminar Médico
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+        {/* Modal de Confirmación de Eliminación de Reservas */}
+        <Modal show={showDeleteAppointmentModal} onHide={() => setShowDeleteAppointmentModal(false)} centered>
+          <Modal.Header closeButton className="bg-danger text-white">
+            <Modal.Title>
+              <FaTrash className="me-2" />Confirmar Eliminación de Reserva
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div className="text-center">
+              <div className="mb-3">
+                <FaCalendarCheck className="display-4 text-danger" />
+              </div>
+              <h5 className="mb-3">¿Estás seguro de que quieres eliminar esta reserva?</h5>
+              {appointmentToDelete && (
+                <div className="alert alert-warning">
+                  <h6 className="mb-2">
+                    <FaUserMd className="me-2" />
+                    {appointmentToDelete.patientName}
+                  </h6>
+                  <p className="mb-0">
+                    <strong>Médico:</strong> {appointmentToDelete.doctorName}
+                  </p>
+                  <p className="mb-0">
+                    <strong>Fecha:</strong> {new Date(appointmentToDelete.date).toLocaleDateString('es-ES')}
+                  </p>
+                  <p className="mb-0">
+                    <strong>Hora:</strong> {appointmentToDelete.time}
+                  </p>
+                  <p className="mb-0">
+                    <strong>Estado:</strong> <Badge bg={getStatusBadgeVariant(appointmentToDelete.status)}>
+                      {getStatusText(appointmentToDelete.status)}
+                    </Badge>
+                  </p>
+                </div>
+              )}
+              <p className="text-muted">
+                Esta acción no se puede deshacer. La reserva será eliminada permanentemente y se notificará al paciente y al médico.
+              </p>
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShowDeleteAppointmentModal(false)}>
+              <FaTimes className="me-2" />Cancelar
+            </Button>
+            <Button variant="danger" onClick={confirmDeleteAppointment}>
+              <FaTrash className="me-2" />Eliminar Reserva
             </Button>
           </Modal.Footer>
         </Modal>
